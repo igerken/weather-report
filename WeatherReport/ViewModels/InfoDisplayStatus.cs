@@ -1,4 +1,4 @@
-﻿namespace WeatherReport.ViewModels
+﻿namespace WeatherReport.App.ViewModels
 {
     public enum InfoDisplayStatus
     {

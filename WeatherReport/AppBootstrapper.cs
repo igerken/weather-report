@@ -1,88 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 
 using Caliburn.Micro;
-using WeatherReport.DataModel;
-using WeatherReport.Interfaces;
-using WeatherReport.Services;
-using WeatherReport.ViewModels;
 
-namespace WeatherReport
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Serilog;
+
+using WeatherReport.WinApp.Data;
+using WeatherReport.WinApp.Interfaces;
+using WeatherReport.WinApp.ViewModels;
+
+namespace WeatherReport.WinApp;
+
+public class AppBootstrapper : BootstrapperBase
 {
-	public class AppBootstrapper : BootstrapperBase
+    public IServiceProvider? ServiceProvider { get; private set; }
+
+	public IConfiguration? Configuration { get; private set; }
+
+	public AppBootstrapper()
 	{
-		SimpleContainer _container = new SimpleContainer();
-		public AppBootstrapper()
+		Initialize();
+
+		var baseLocateTypeForModelType = ViewLocator.LocateTypeForModelType;
+		ViewLocator.LocateTypeForModelType = (modelType, displayLocation, context) =>
 		{
-			Initialize();
+			if (modelType.Equals(typeof(WeatherViewModel)))
+				return typeof(MainWindow);
+			return baseLocateTypeForModelType(modelType, displayLocation, context);
+		};
 
-			var baseLocateTypeForModelType = ViewLocator.LocateTypeForModelType;
-			ViewLocator.LocateTypeForModelType = (modelType, displayLocation, context) =>
-			{
-				if (modelType.Equals(typeof(WeatherViewModel)))
-					return typeof(MainWindow);
-				return baseLocateTypeForModelType(modelType, displayLocation, context);
-			};
-
-            var baseLocateTypeForViewType = ViewModelLocator.LocateTypeForViewType;
-            ViewModelLocator.LocateTypeForViewType = (viewType, searchForInterface) =>
-            {
-                if (viewType.Equals(typeof(UserSettingsControl)))
-                    return typeof(UserSettingsViewModel);
-                return baseLocateTypeForViewType(viewType, searchForInterface);
-            };
-        }
-
-		protected override void Configure()
+		var baseLocateTypeForViewType = ViewModelLocator.LocateTypeForViewType;
+		ViewModelLocator.LocateTypeForViewType = (viewType, searchForInterface) =>
 		{
-			_container.Singleton<IWindowManager, WindowManager>();
-			_container.Singleton<IEventAggregator, EventAggregator>();
+			if (viewType.Equals(typeof(UserSettingsControl)))
+				return typeof(UserSettingsViewModel);
+			return baseLocateTypeForViewType(viewType, searchForInterface);
+		};
+	}
 
-			_container.Singleton<IGlobalDataContainer, GlobalDataContainer>();
-			_container.Singleton<IYrWeatherService, YrWeatherService>();
-			_container.Singleton<IYrWeatherDataStorage, YrWeatherDataStorage>();
-			_container.RegisterInstance(typeof(log4net.ILog), null, log4net.LogManager.GetLogger(typeof(WeatherViewModel)));
-			_container.RegisterInstance(typeof(IWeatherSettings), null, Settings.Default);
-			_container.PerRequest<WeatherViewModel>();
-			_container.PerRequest<DownloadProgressViewModel>();
-			_container.PerRequest<UserSettingsViewModel>();
-		}
+	protected override void Configure()
+	{
+		var builder = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
-		protected override object GetInstance(Type serviceType, string key)
-		{
-			var instance = _container.GetInstance(serviceType, key);
+        Configuration = builder.Build();
 
-            if (instance == null && key== "WeatherReport.ViewModels.UserSettingsViewModel")
-                instance = _container.GetInstance(typeof(UserSettingsViewModel), null);
+        var serviceCollection = new ServiceCollection();
 
-            if (instance == null)
-				throw new InvalidOperationException(String.Format("Could not resolve type {0}", serviceType));
+		serviceCollection.AddSingleton<IWindowManager, WindowManager>();
+		serviceCollection.AddSingleton<IEventAggregator, EventAggregator>();
 
-			//WeatherViewModel weatherInstance = instance as WeatherViewModel;
-			//if (weatherInstance != null)
-			//	weatherInstance.Init();
+		//_container.Singleton<IGlobalDataContainer, GlobalDataContainer>();
+		//_container.Singleton<IYrWeatherService, YrWeatherService>();
+		//_container.Singleton<IYrWeatherDataStorage, YrWeatherDataStorage>();
+		_container.RegisterInstance(typeof(log4net.ILog), null, log4net.LogManager.GetLogger(typeof(WeatherViewModel)));
+		_container.RegisterInstance(typeof(IWeatherSettings), null, Settings.Default);
+		//serviceCollection.AddSerilog()
+		serviceCollection.AddScoped<WeatherViewModel>();
+		serviceCollection.AddScoped<DownloadProgressViewModel>();
+		serviceCollection.AddScoped<UserSettingsViewModel>();
 
-			return instance;
-		}
+        ServiceProvider = serviceCollection.BuildServiceProvider();		
+	}
 
-		protected override IEnumerable<object> GetAllInstances(Type serviceType)
-		{
-			return _container.GetAllInstances(serviceType);
-		}
+	protected override object GetInstance(Type serviceType, string key)
+	{
+		var instance = _container.GetInstance(serviceType, key);
 
-		protected override void BuildUp(object instance)
-		{
-			_container.BuildUp(instance);
-		}
+		if (instance == null && key== "WeatherReport.ViewModels.UserSettingsViewModel")
+			instance = _container.GetInstance(typeof(UserSettingsViewModel), null);
 
-		protected override void OnStartup(object sender, StartupEventArgs e)
-		{
-            DisplayRootViewFor<WeatherViewModel>();
-            WeatherViewModel weatherViewModel = _container.GetInstance<WeatherViewModel>(null);
-            if (weatherViewModel != null)
-                weatherViewModel.Init();
+		if (instance == null)
+			throw new InvalidOperationException(String.Format("Could not resolve type {0}", serviceType));
 
-        }
-    }
+		WeatherViewModel? weatherInstance = instance as WeatherViewModel;
+		if (weatherInstance != null)
+			weatherInstance.Init();
+
+		return instance;
+	}
+
+	protected override IEnumerable<object> GetAllInstances(Type serviceType)
+	{
+		return _container.GetAllInstances(serviceType);
+	}
+
+	protected override void BuildUp(object instance)
+	{
+		_container.BuildUp(instance);
+	}
+
+	protected override async void OnStartup(object sender, StartupEventArgs e)
+	{
+		await DisplayRootViewForAsync<WeatherViewModel>();
+		WeatherViewModel weatherViewModel = _container.GetInstance<WeatherViewModel>(null);
+		if (weatherViewModel != null)
+			weatherViewModel.Init();
+	}
 }

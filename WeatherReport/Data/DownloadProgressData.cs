@@ -1,4 +1,4 @@
-﻿namespace WeatherReport.Data
+﻿namespace WeatherReport.WinApp.Data
 {
 	public class DownloadProgressData
 	{

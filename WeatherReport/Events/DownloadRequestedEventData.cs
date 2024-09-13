@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WeatherReport.Events
+namespace WeatherReport.WinApp.Events
 {
 	public class DownloadRequestedEventData
 	{

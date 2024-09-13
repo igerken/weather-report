@@ -6,13 +6,12 @@ using System.Text;
 using System.Windows.Input;
 
 using Caliburn.Micro;
-using log4net;
 using WeatherReport.DataModel;
 using WeatherReport.Events;
 using WeatherReport.Interfaces;
 using WeatherReport.MVVM;
 
-namespace WeatherReport.ViewModels
+namespace WeatherReport.WinApp.ViewModels
 {
     public class UserSettingsViewModel : PropertyChangedBase, IHandle<SettingsRequestedEventData>
 	{

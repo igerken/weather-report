@@ -4,4 +4,3 @@ public interface IWeatherService
 {
     Task<IWeatherInfo> GetWeather(ILocation location);
 }
-

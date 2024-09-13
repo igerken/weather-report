@@ -1,6 +1,5 @@
-﻿namespace WeatherReport.Events
+﻿namespace WeatherReport.WinApp.Events;
+
+public class SettingsRequestedEventData
 {
-	public class SettingsRequestedEventData
-	{
-	}
 }

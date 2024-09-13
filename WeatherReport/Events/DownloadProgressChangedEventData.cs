@@ -1,16 +1,15 @@
 ﻿using WeatherReport.Data;
 
-namespace WeatherReport.Events
+namespace WeatherReport.WinApp.Events;
+
+public class DownloadProgressChangedEventData
 {
-	public class DownloadProgressChangedEventData
+	private DownloadProgressData _data;
+
+	public DownloadProgressData Data { get { return _data; } }
+
+	public DownloadProgressChangedEventData(DownloadProgressData data)
 	{
-		private DownloadProgressData _data;
-
-		public DownloadProgressData Data { get { return _data; } }
-
-		public DownloadProgressChangedEventData(DownloadProgressData data)
-		{
-			_data = data;
-		}
+		_data = data;
 	}
 }

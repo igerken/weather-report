@@ -3,7 +3,7 @@ using System.Windows;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace WeatherReport;
+namespace WeatherReport.WinApp;
 
 public partial class App : Application
 {
@@ -26,12 +26,5 @@ public partial class App : Application
 
         var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
         mainWindow.Show();
-    }
-
-    private void ConfigureServices(IServiceCollection services)
-    {
-        //services.Configure<AppSettings>(Configuration!.GetSection(nameof(AppSettings)));
-
-        services.AddTransient(typeof(MainWindow));
     }
 }
