@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WeatherReport
+namespace WeatherReport.WinApp.Views
 {
     /// <summary>
     /// Interaction logic for UserSettingsControl.xaml
@@ -21,7 +21,7 @@ namespace WeatherReport
     {
         public UserSettingsControl()
         {
-            InitializeComponent();
+            //InitializeComponent();
         }
     }
 }

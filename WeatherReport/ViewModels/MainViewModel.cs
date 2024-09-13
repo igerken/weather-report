@@ -1,23 +1,19 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using System.Windows.Threading;
 
 using Caliburn.Micro;
+using Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro;
 using Microsoft.Extensions.Logging;
-using WeatherReport.App.Interfaces;
+using WeatherReport.WinApp.Interfaces;
+using WeatherReport.WinApp.Data;
+using WeatherReport.WinApp.Events;
 using WeatherReport.Core;
-using WeatherReport.Data;
-using WeatherReport.Events;
 using WeatherReport.MVVM;
 
 namespace WeatherReport.WinApp.ViewModels;
 
-public class WeatherViewModel : PropertyChangedBase, 
-	IHandle<SettingsOkayedEventData>,
-	IHandle<SettingsCancelledEventData>
+public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
+	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
 
@@ -42,7 +38,6 @@ public class WeatherViewModel : PropertyChangedBase,
 	private RelayCommand _settingsCommand;
 
 	private IWeatherInfo _weatherInfo;
-	private YrCountryData _displayedCountry;
 	private string _displayedCity;
 	private string _infoDisplayString = DEFAULT_DISPLAYED_CITY;
 
@@ -51,6 +46,8 @@ public class WeatherViewModel : PropertyChangedBase,
 	private string? _newWeatherRetrievalError = null;
 
 	private InfoDisplayStatus _infoDisplayStatus = InfoDisplayStatus.Normal;
+
+	private AppSettings _settings;
 
 	public IWeatherInfo WeatherInfo
 	{
@@ -62,19 +59,6 @@ public class WeatherViewModel : PropertyChangedBase,
 				_weatherInfo = value;
 				NotifyOfPropertyChange(() => WeatherInfo);
 				NotifyOfPropertyChange(() => TemperatureString);
-			}
-		}
-	}
-	
-	public YrCountryData DisplayedCountry
-	{
-		get { return _displayedCountry; }
-		set
-		{
-			if (_displayedCountry != value)
-			{
-				_displayedCountry = value;
-				NotifyOfPropertyChange(() => DisplayedCountry);
 			}
 		}
 	}
@@ -174,11 +158,12 @@ public class WeatherViewModel : PropertyChangedBase,
 		get { return _settingsCommand; }
 	}
 
-	public WeatherViewModel(IWeatherService weatherService, IEventAggregator eventAggregator, //IGlobalDataContainer globalDataContainer, 
+	public MainViewModel(IWeatherService weatherService, IEventAggregator eventAggregator, //IGlobalDataContainer globalDataContainer, 
 		IUserSettings userSettings, ILogger logger)
 	{
 		_weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+		_userSettings = userSettings;
 		_logger = logger;
 /*
 		_yrWeatherDataStorage = yrWeatherDataStorage;
@@ -189,7 +174,10 @@ public class WeatherViewModel : PropertyChangedBase,
 
 		_weatherInfo = EmptyWeatherInfo.Instance;
 
-		int refreshMs = 1000 * settings.RefreshIntervalSeconds;
+		_settings = new AppSettings { RefreshIntervalSeconds = 10 };
+ 
+		int refreshMs = 1000 * _settings.RefreshIntervalSeconds;
+		/*
 		_serviceRefreshTimer = new Timer(callback => GetWeather(false), null, refreshMs, refreshMs);
 
 		_weatherInfoUpdateTimer = new DispatcherTimer();
@@ -202,10 +190,10 @@ public class WeatherViewModel : PropertyChangedBase,
 				_isNewWeatherInfoRetrieved = false;
 			}
 		});
-
+		*/
 		_eventAggregator.SubscribeOnPublishedThread(this);
 	}
-
+/*
 	public void Init()
 	{
 		if (!String.IsNullOrEmpty(_settings.SelectedCity))
@@ -233,18 +221,18 @@ public class WeatherViewModel : PropertyChangedBase,
 		else
 		{
 			IsSettingsLayerVisible = true;
-			_eventAggregator.PublishOnUIThread(new SettingsRequestedEventData());
+			_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
 		}
 
 		_weatherInfoUpdateTimer.Start();
 	}
-
+*/
 	private void SettingsButton_Clicked()
 	{
 		IsSettingsLayerVisible = true;
-		_eventAggregator.PublishOnUIThread(new SettingsRequestedEventData());
+		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
 	}
-
+/*
 	private async Task GetWeather(bool updateImmediately)
 	{
 		if (DisplayedCountry != null && DisplayedCity != null)
@@ -277,7 +265,7 @@ public class WeatherViewModel : PropertyChangedBase,
 			}                
 		}
 	}        
-
+*/
 	private void SetInfoDisplayError(string message)
 	{
 		InfoDisplayStatus = ViewModels.InfoDisplayStatus.Error;
@@ -295,30 +283,15 @@ public class WeatherViewModel : PropertyChangedBase,
 		return DisplayedErrors.ResourceManager.GetString(wex.Reason.ToString());
 	}
 
-	public async void DownloadLocationData()
-	{
-		Progress<DownloadProgressData> progress = new Progress<DownloadProgressData>(
-			progressData => _eventAggregator.PublishOnUIThread(new DownloadProgressChangedEventData(progressData))
-		);
-		YrLocationDataContainer locationData = await _weatherService.GetLocationData(progress).ConfigureAwait(false);
-		_globalDataContainer.YrLocationData = locationData;
-		IsDownloadProgressLayerVisible = false;
-		IsSettingsLayerVisible = true;
-		_yrWeatherDataStorage.StoreLocationData(_globalDataContainer.YrLocationData);
-		_eventAggregator.PublishOnUIThread(new SettingsRequestedEventData());
-	}
-
 	public async Task HandleAsync(SettingsOkayedEventData message, CancellationToken cancellationToken)
 	{
-		if(_globalDataContainer.YrLocationData.Countries.ContainsKey(message.CountryCode))
-			DisplayedCountry = _globalDataContainer.YrLocationData.Countries[message.CountryCode];
 		_displayedCity = message.City;
 		ResetInfoDisplay();
 		IsSettingsLayerVisible = false;
 		WeatherInfo = EmptyWeatherInfo.Instance;
 		IsDownloadProgressLayerVisible = true;
 		await _eventAggregator.PublishOnUIThreadAsync(new DownloadRequestedEventData());
-		await GetWeather(true);
+		//await GetWeather(true);
 		IsDownloadProgressLayerVisible = false;
 	}
 

@@ -1,4 +1,4 @@
-﻿using WeatherReport.Data;
+﻿using WeatherReport.WinApp.Data;
 
 namespace WeatherReport.WinApp.Events;
 

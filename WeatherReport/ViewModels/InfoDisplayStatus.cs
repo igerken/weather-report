@@ -1,9 +1,8 @@
-﻿namespace WeatherReport.App.ViewModels
+﻿namespace WeatherReport.WinApp.ViewModels;
+
+public enum InfoDisplayStatus
 {
-    public enum InfoDisplayStatus
-    {
-        Unknown = 0,
-        Normal,
-        Error
-    }
+    Unknown = 0,
+    Normal,
+    Error
 }

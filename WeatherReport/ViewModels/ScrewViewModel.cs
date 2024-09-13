@@ -1,6 +1,6 @@
 ﻿using WeatherReport.MVVM;
 
-namespace WeatherReport.App.ViewModels;
+namespace WeatherReport.WinApp.ViewModels;
 
 public class ScrewViewModel : ObservableObject
 {

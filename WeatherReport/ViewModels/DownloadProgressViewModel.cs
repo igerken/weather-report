@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using Caliburn.Micro;
 
-using WeatherReport.Events;
-using WeatherReport.Interfaces;
+using WeatherReport.WinApp.Events;
 
 namespace WeatherReport.WinApp.ViewModels;
 
@@ -12,8 +11,6 @@ public class DownloadProgressViewModel : PropertyChangedBase, IHandle<DownloadRe
 	private const double DOWNLOAD_PROGRESS_ANGLE_START = 0.25 * Math.PI;
 	private const double DOWNLOAD_PROGRESS_R = 30.0;
 
-	private readonly IYrWeatherService _yrWeatherService;
-	private readonly IGlobalDataContainer _globalDataContainer;
 	private readonly IEventAggregator _eventAggregator;
 
 	private bool _isLargeArc = false;
@@ -59,12 +56,10 @@ public class DownloadProgressViewModel : PropertyChangedBase, IHandle<DownloadRe
 		}
 	}
 
-	public DownloadProgressViewModel(IYrWeatherService yrWeatherService, IGlobalDataContainer globalDataContainer, IEventAggregator eventAggregator)
+	public DownloadProgressViewModel(IEventAggregator eventAggregator)
 	{
-		_yrWeatherService = yrWeatherService;
-		_globalDataContainer = globalDataContainer;
 		_eventAggregator = eventAggregator;
-		_eventAggregator.Subscribe(this);
+		_eventAggregator.SubscribeOnPublishedThread(this);
 	}
 
     public Task HandleAsync(DownloadRequestedEventData message, CancellationToken cancellationToken)

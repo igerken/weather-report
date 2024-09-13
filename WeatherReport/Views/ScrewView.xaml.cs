@@ -12,9 +12,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using WeatherReport.ViewModels;
+using WeatherReport.WinApp.ViewModels;
 
-namespace WeatherReport
+namespace WeatherReport.WinApp.Views
 {
     /// <summary>
     /// Interaction logic for Screw.xaml
@@ -32,7 +32,7 @@ namespace WeatherReport
 
         public Screw()
         {
-            InitializeComponent();
+           //InitializeComponent();
             _viewModel = new ScrewViewModel(Size);
             DataContext = _viewModel;
         }
@@ -51,7 +51,7 @@ namespace WeatherReport
 
         private static void Size_PropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            Screw screw = obj as Screw;
+            Screw? screw = obj as Screw;
             if (screw != null)
             {
                 screw._viewModel.SetSize(screw.Size);
@@ -61,7 +61,7 @@ namespace WeatherReport
 
         private static void SlitDirection_PropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            Screw screw = obj as Screw;
+            Screw? screw = obj as Screw;
             if (screw != null)
                 screw._viewModel.RecalculateSlitCoordinates(screw.SlitDirection);
         }

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="WeatherReport.UserSettingsControl"
+﻿<UserControl x:Class="WeatherReport.WinApp.Views.UserSettingsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,7 +6,7 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="240" d:DesignWidth="240"
-             cal:Bind.Model="WeatherReport.ViewModels.UserSettingsViewModel">
+             cal:Bind.Model="WeatherReport.WinApp.ViewModels.UserSettingsViewModel">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
         <Style TargetType="{x:Type Image}">

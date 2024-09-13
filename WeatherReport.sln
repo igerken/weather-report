@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherReport", "WeatherRep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherReport.Core", "WeatherReport.Core\WeatherReport.Core.csproj", "{6F7D5009-CCC5-4BCF-8B79-AEFA0389CABA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeatherReport.YrService", "WeatherReport.YrService\WeatherReport.YrService.csproj", "{8BADE25F-C2A1-477A-B93E-29555FD96C55}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,18 @@ Global
 		{6F7D5009-CCC5-4BCF-8B79-AEFA0389CABA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6F7D5009-CCC5-4BCF-8B79-AEFA0389CABA}.Release|x86.ActiveCfg = Release|Any CPU
 		{6F7D5009-CCC5-4BCF-8B79-AEFA0389CABA}.Release|x86.Build.0 = Release|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Debug|x86.Build.0 = Debug|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Release|x86.ActiveCfg = Release|Any CPU
+		{8BADE25F-C2A1-477A-B93E-29555FD96C55}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

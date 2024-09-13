@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro" />
+    <PackageReference Include="Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Serilog" />
@@ -23,5 +24,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WeatherReport.Core\WeatherReport.Core.csproj" />
+    <ProjectReference Include="..\WeatherReport.YrService\WeatherReport.YrService.csproj" />
   </ItemGroup>
 </Project>

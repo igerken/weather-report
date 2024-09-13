@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace WeatherReport
+namespace WeatherReport.WinApp.Views
 {
 	/// <summary>
 	/// Interaction logic for DownloadProgressControl.xaml
@@ -23,7 +23,7 @@ namespace WeatherReport
 	{
 		public DownloadProgressControl()
 		{
-			InitializeComponent();
+			//InitializeComponent();
 		}
 
 

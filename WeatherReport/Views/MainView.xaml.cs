@@ -1,11 +1,11 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-namespace WeatherReport;
+namespace WeatherReport.WinApp.Views;
 
-public partial class MainWindow : Window
+public partial class MainView : Window
 {
-    public MainWindow()
+    public MainView()
     {
         //InitializeComponent();
     }

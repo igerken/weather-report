@@ -6,10 +6,12 @@ using System.Text;
 using System.Windows.Input;
 
 using Caliburn.Micro;
-using WeatherReport.DataModel;
-using WeatherReport.Events;
+using Microsoft.Extensions.Logging;
+using WeatherReport.WinApp.Data;
+using WeatherReport.WinApp.Events;
 using WeatherReport.Interfaces;
 using WeatherReport.MVVM;
+using WeatherReport.WinApp.Interfaces;
 
 namespace WeatherReport.WinApp.ViewModels
 {
@@ -17,21 +19,20 @@ namespace WeatherReport.WinApp.ViewModels
 	{
         private const string DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE = "";
 
-        private readonly IGlobalDataContainer _globalDataContainer;
 		private readonly IEventAggregator _eventAggregator;
-		private readonly log4net.ILog _logger;
-        private IWeatherSettings _settings;
+		private readonly ILogger _logger;
+        private IUserSettings _userSettings;
 
         private RelayCommand _settingsOkCommand;
         private RelayCommand _settingsCancelCommand;
-
+/*
         private List<YrCountryData> _countries;
         private YrCountryData _initialCountry;
         private YrCountryData _selectedCountry;
-
+*/
         private ObservableCollection<string> _cities;
-        private string _initialCity;
-        private string _selectedCity;
+        //private string _initialCity;
+        private string? _selectedCity;
 
         private bool _isCityListAvailable = true;
         private string _cityListRetrievalErrorMessage = DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE;
@@ -46,7 +47,7 @@ namespace WeatherReport.WinApp.ViewModels
         {
             get { return _settingsCancelCommand; }
         }
-
+/*
         public List<YrCountryData> Countries
 		{
             get { return _countries; }
@@ -65,13 +66,13 @@ namespace WeatherReport.WinApp.ViewModels
                 }
             }
         }
-
+*/
         public ObservableCollection<string> Cities
         {
             get { return _cities; }
         }
 
-        public string SelectedCity
+        public string? SelectedCity
         {
             get { return _selectedCity; }
             set
@@ -118,44 +119,36 @@ namespace WeatherReport.WinApp.ViewModels
             }
         }
 
-        public UserSettingsViewModel(IGlobalDataContainer globalDataContainer, IEventAggregator eventAggregator, log4net.ILog logger, IWeatherSettings settings)
+        public UserSettingsViewModel(IUserSettings userSettings, IEventAggregator eventAggregator, ILogger logger)
         {
-            if (globalDataContainer == null)
-                throw new ArgumentNullException("globalDataContainer");
-            if (logger == null)
-                throw new ArgumentNullException("logger");
-            if (settings == null)
-                throw new ArgumentNullException("settings");
-
-			_globalDataContainer = globalDataContainer;
-			_eventAggregator = eventAggregator;
+            _userSettings = userSettings;
+			_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 			_logger = logger;
-            _settings = settings;
 
             _settingsOkCommand = new RelayCommand(SettingsOkButton_Clicked, 
                 () => (IsCityListAvailable && !String.IsNullOrEmpty(SelectedCity)));
             _settingsCancelCommand = new RelayCommand(SettingsCancelButton_Clicked);
 
-			_countries = new List<YrCountryData>();
+			//_countries = new List<YrCountryData>();
             _cities = new ObservableCollection<string>();
 
-			_eventAggregator.Subscribe(this);
+			_eventAggregator.SubscribeOnPublishedThread(this);
 		}
 
         private void SettingsOkButton_Clicked()
-        {
-            _settings.SelectedCountry = SelectedCountry.CountryCode;
-            _settings.SelectedCity = SelectedCity;
-            _settings.Save();
+        {/*
+            _userSettings.SelectedCountry = SelectedCountry.CountryCode;
+            _userSettings.SelectedCity = SelectedCity;
+            _userSettings.Save();
 
             _initialCountry = SelectedCountry;
             _initialCity = SelectedCity;
 
-			_eventAggregator.PublishOnUIThread(new SettingsOkayedEventData(SelectedCountry.CountryCode, SelectedCity));
+			_eventAggregator.PublishOnUIThread(new SettingsOkayedEventData(SelectedCountry.CountryCode, SelectedCity));*/
         }
 
         private void SettingsCancelButton_Clicked()
-        {
+        {/*
             _selectedCountry = _initialCountry;
             _selectedCity = _initialCity;
 
@@ -163,7 +156,7 @@ namespace WeatherReport.WinApp.ViewModels
 			NotifyOfPropertyChange(() => SelectedCountry);
 			NotifyOfPropertyChange(() => SelectedCity);
 
-			_eventAggregator.PublishOnUIThread(new SettingsCancelledEventData());
+			_eventAggregator.PublishOnUIThread(new SettingsCancelledEventData());*/
 		}
 
         private void UpdateCityList()
@@ -172,7 +165,7 @@ namespace WeatherReport.WinApp.ViewModels
         }
 
         private void UpdateCityList(bool resetSelectedCity)
-        {
+        {/*
 			if(_globalDataContainer.YrLocationData.Countries.ContainsKey(SelectedCountry.CountryCode))
 			{
 				YrCountryData country = _globalDataContainer.YrLocationData.Countries[SelectedCountry.CountryCode];
@@ -193,16 +186,11 @@ namespace WeatherReport.WinApp.ViewModels
 				}
 				IsCityListAvailable = true;
 				CityListRetrievalErrorMessage = DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE;
-			}			
+			}	*/		
         }
 
-        private string GetWeatherServiceExceptionDisplayedMessage(Services.WeatherServiceException wex)
-        {
-            return DisplayedErrors.ResourceManager.GetString(wex.Reason.ToString());
-        }
-
-		public void Handle(SettingsRequestedEventData message)
-		{
+        public Task HandleAsync(SettingsRequestedEventData message, CancellationToken cancellationToken)
+		{/*
 			_countries = _globalDataContainer.YrLocationData.Countries.Values.ToList();
 			NotifyOfPropertyChange(() => Countries);
 
@@ -222,7 +210,8 @@ namespace WeatherReport.WinApp.ViewModels
 			{
 				_initialCity = _settings.SelectedCity;
 				SelectedCity = _settings.SelectedCity;
-			}
+			}*/
+            return Task.CompletedTask;
 		}
-	}
+    }
 }
