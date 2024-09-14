@@ -23,7 +23,7 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 	//private readonly IYrWeatherDataStorage _yrWeatherDataStorage;
 	private readonly IEventAggregator _eventAggregator;
 	//private readonly IGlobalDataContainer _globalDataContainer;
-	private readonly ILogger _logger;
+	private readonly ILogger<MainViewModel> _logger;
 
 	private readonly Interfaces.IUserSettings _userSettings;
 
@@ -159,7 +159,7 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 	}
 
 	public MainViewModel(IWeatherService weatherService, IEventAggregator eventAggregator, //IGlobalDataContainer globalDataContainer, 
-		IUserSettings userSettings, ILogger logger)
+		IUserSettings userSettings, ILogger<MainViewModel> logger)
 	{
 		_weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));

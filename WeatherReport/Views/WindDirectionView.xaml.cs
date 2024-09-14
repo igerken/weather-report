@@ -5,18 +5,18 @@ using WeatherReport.WinApp.ViewModels;
 
 namespace WeatherReport.WinApp.Views;
 
-public partial class WindDirectionDisplay : UserControl
+public partial class WindDirectionView : UserControl
 {
     public static readonly DependencyProperty WindSpeedProperty =
-        DependencyProperty.Register("WindSpeed", typeof(double?), typeof(WindDirectionDisplay),
+        DependencyProperty.Register("WindSpeed", typeof(double?), typeof(WindDirectionView),
             new PropertyMetadata(new PropertyChangedCallback(Wind_PropertyChanged)));
     public static readonly DependencyProperty WindDirectionProperty =
-        DependencyProperty.Register("WindDirection", typeof(double?), typeof(WindDirectionDisplay),
+        DependencyProperty.Register("WindDirection", typeof(double?), typeof(WindDirectionView),
             new PropertyMetadata(new PropertyChangedCallback(Wind_PropertyChanged)));
 
     WindDirectionViewModel _viewModel;
 
-    public WindDirectionDisplay()
+    public WindDirectionView()
     {
         //InitializeComponent();
         _viewModel = new WindDirectionViewModel(50.0, 50.0, 40.0);
@@ -37,7 +37,7 @@ public partial class WindDirectionDisplay : UserControl
 
     private static void Wind_PropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
     {
-        WindDirectionDisplay? display = obj as WindDirectionDisplay;
+        WindDirectionView? display = obj as WindDirectionView;
         if(display != null)
         {
             display._viewModel.RecalculateArrowData(display.WindSpeed, display.WindDirection);
