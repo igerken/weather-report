@@ -9,11 +9,12 @@ using WeatherReport.WinApp.Data;
 using WeatherReport.WinApp.Events;
 using WeatherReport.Core;
 using WeatherReport.MVVM;
+using WeatherReport.Core.Events;
 
 namespace WeatherReport.WinApp.ViewModels;
 
 public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
-	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>
+	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>, IHandle<IWeatherUpdated>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
 
@@ -29,7 +30,6 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 
 
 	private readonly Timer _serviceRefreshTimer;
-	private readonly DispatcherTimer _weatherInfoUpdateTimer;	
 
 
 	private bool _isSettingsLayerVisible = false;
@@ -180,16 +180,6 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		/*
 		_serviceRefreshTimer = new Timer(callback => GetWeather(false), null, refreshMs, refreshMs);
 
-		_weatherInfoUpdateTimer = new DispatcherTimer();
-		_weatherInfoUpdateTimer.Interval = TimeSpan.FromMilliseconds(5000);// (500 * settings.RefreshIntervalSeconds);
-		_weatherInfoUpdateTimer.Tick += new EventHandler((s, e) =>
-		{
-			if(_isNewWeatherInfoRetrieved)
-			{
-				WeatherInfo = _newWeatherInfo;
-				_isNewWeatherInfoRetrieved = false;
-			}
-		});
 		*/
 		_eventAggregator.SubscribeOnPublishedThread(this);
 	}
@@ -301,7 +291,13 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		return Task.CompletedTask;
 	}
 
-	private class EmptyWeatherInfo : IWeatherInfo
+    public Task HandleAsync(IWeatherUpdated message, CancellationToken cancellationToken)
+    {
+        WeatherInfo = message.Weather;
+		return Task.CompletedTask;
+    }
+
+    private class EmptyWeatherInfo : IWeatherInfo
 	{
 		public double? Temperature => null;
 

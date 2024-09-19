@@ -36,7 +36,7 @@ public static class Program
                 serviceCollection.AddTransient<DownloadProgressViewModel>();
                 serviceCollection.AddTransient<UserSettingsViewModel>();
                 serviceCollection.AddTransient<DownloadProgressViewModel>();
-                serviceCollection.AddTransient<DownloadProgressViewModel>();
+                serviceCollection.AddSingleton<WeatherUpdateService>();
                 serviceCollection.AddSingleton<IWindowManager, WindowManager>();
                 serviceCollection.AddSingleton<IEventAggregator, EventAggregator>();
                 serviceCollection.AddSingleton<IWeatherService, YrWeatherService>();
@@ -47,6 +47,7 @@ public static class Program
             .Build();
 
         Console.WriteLine("Run!");
+        var aa = host.Services.GetRequiredService<WeatherUpdateService>();
         return host.RunAsync();
     }
 

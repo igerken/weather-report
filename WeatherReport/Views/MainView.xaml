@@ -163,9 +163,7 @@
                 </StackPanel>
                 
                 <Canvas Width="100" Height="100">
-                    <ctlr:WindDirectionView
-                        WindSpeed="{Binding Path=WeatherInfo.WindSpeed}" 
-                        WindDirection="{Binding Path=WeatherInfo.WindDirection}" />
+                    <ctlr:WindDirectionView />
                 </Canvas>
             </Grid>
         </Viewbox>
