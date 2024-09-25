@@ -19,18 +19,18 @@ namespace WeatherReport.WinApp.Views
     /// <summary>
     /// Interaction logic for Screw.xaml
     /// </summary>
-    public partial class Screw : UserControl
+    public partial class ScrewView : UserControl
     {
         public static readonly DependencyProperty SizeProperty =
-            DependencyProperty.Register("Size", typeof(double), typeof(Screw),
+            DependencyProperty.Register("Size", typeof(double), typeof(ScrewView),
                 new PropertyMetadata(new PropertyChangedCallback(Size_PropertyChanged)));
         public static readonly DependencyProperty SlitDirectionProperty =
-            DependencyProperty.Register("SlitDirection", typeof(double), typeof(Screw),
+            DependencyProperty.Register("SlitDirection", typeof(double), typeof(ScrewView),
                 new PropertyMetadata(new PropertyChangedCallback(SlitDirection_PropertyChanged)));
 
         ScrewViewModel _viewModel;
 
-        public Screw()
+        public ScrewView()
         {
            //InitializeComponent();
             _viewModel = new ScrewViewModel(Size);
@@ -51,7 +51,7 @@ namespace WeatherReport.WinApp.Views
 
         private static void Size_PropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            Screw? screw = obj as Screw;
+            ScrewView? screw = obj as ScrewView;
             if (screw != null)
             {
                 screw._viewModel.SetSize(screw.Size);
@@ -61,7 +61,7 @@ namespace WeatherReport.WinApp.Views
 
         private static void SlitDirection_PropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            Screw? screw = obj as Screw;
+            ScrewView? screw = obj as ScrewView;
             if (screw != null)
                 screw._viewModel.RecalculateSlitCoordinates(screw.SlitDirection);
         }

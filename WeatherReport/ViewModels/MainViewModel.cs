@@ -10,6 +10,7 @@ using WeatherReport.WinApp.Events;
 using WeatherReport.Core;
 using WeatherReport.MVVM;
 using WeatherReport.Core.Events;
+using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 
 namespace WeatherReport.WinApp.ViewModels;
 
@@ -20,17 +21,17 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 
 	private const string DEFAULT_DISPLAYED_CITY = "----";        
 
-	private readonly IWeatherService _weatherService;
-	//private readonly IYrWeatherDataStorage _yrWeatherDataStorage;
+	private readonly IWpfContext _wpfContext;
+
+	private readonly IServiceProvider _serviceProvider;
+
 	private readonly IEventAggregator _eventAggregator;
-	//private readonly IGlobalDataContainer _globalDataContainer;
+	
 	private readonly ILogger<MainViewModel> _logger;
 
 	private readonly Interfaces.IUserSettings _userSettings;
 
-
-	private readonly Timer _serviceRefreshTimer;
-
+	//private readonly WindDirectionViewModel _windDirectionViewModel;
 
 	private bool _isSettingsLayerVisible = false;
 	private bool _isDownloadProgressLayerVisible;
@@ -41,13 +42,12 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 	private string _displayedCity;
 	private string _infoDisplayString = DEFAULT_DISPLAYED_CITY;
 
-	private bool _isNewWeatherInfoRetrieved;
-	private IWeatherInfo? _newWeatherInfo = null;
-	private string? _newWeatherRetrievalError = null;
-
 	private InfoDisplayStatus _infoDisplayStatus = InfoDisplayStatus.Normal;
 
 	private AppSettings _settings;
+
+	public WindDirectionViewModel WindDirectionViewModel =>
+		(WindDirectionViewModel)_serviceProvider.GetService(typeof(WindDirectionViewModel))!;
 
 	public IWeatherInfo WeatherInfo
 	{
@@ -158,10 +158,12 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		get { return _settingsCommand; }
 	}
 
-	public MainViewModel(IWeatherService weatherService, IEventAggregator eventAggregator, //IGlobalDataContainer globalDataContainer, 
+	public MainViewModel(IWpfContext wpfContext, IServiceProvider serviceProvider, 
+		IEventAggregator eventAggregator, 
 		IUserSettings userSettings, ILogger<MainViewModel> logger)
 	{
-		_weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
+		_wpfContext = wpfContext ?? throw new ArgumentNullException(nameof(wpfContext));
+		_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 		_userSettings = userSettings;
 		_logger = logger;

@@ -7,7 +7,7 @@ public partial class MainView : Window
 {
     public MainView()
     {
-        //InitializeComponent();
+        InitializeComponent();
     }
 
     private void Shutdown_Click(object sender, RoutedEventArgs e)

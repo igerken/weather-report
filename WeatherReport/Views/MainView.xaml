@@ -4,6 +4,7 @@
         xmlns:ctlr="clr-namespace:WeatherReport.WinApp.Views"
         xmlns:vm="clr-namespace:WeatherReport.WinApp.ViewModels"
         xmlns:tc="clr-namespace:WeatherReport.WinApp.Converters"
+        xmlns:cal="http://www.caliburnproject.org"
         Title="Weather" Height="240" Width="240" Background="#6685A8" WindowStyle="None"
         WindowStartupLocation="CenterScreen"
         MouseDown="Window_MouseDown">
@@ -145,8 +146,8 @@
                             Command="{Binding Path=SettingsCommand}" ToolTip="Settings"
                             Visibility="{Binding Path=IsSettingsButtonVisible, Converter={StaticResource BooleanToVisibility}}" />
 
-                    <ctlr:Screw Canvas.Left="4" Canvas.Top="4" Size="7" SlitDirection="0.7854" />
-                    <ctlr:Screw Canvas.Left="4" Canvas.Bottom="4" Size="7" SlitDirection="2.0943" />
+                    <ctlr:ScrewView Canvas.Left="4" Canvas.Top="4" Size="7" SlitDirection="0.7854" />
+                    <ctlr:ScrewView Canvas.Left="4" Canvas.Bottom="4" Size="7" SlitDirection="2.0943" />
                     
                     <Ellipse Width="100" Height="100" 
                         Stroke="{StaticResource CircularBevelBrush}" StrokeThickness="1" />
@@ -163,7 +164,8 @@
                 </StackPanel>
                 
                 <Canvas Width="100" Height="100">
-                    <ctlr:WindDirectionView />
+                    <!--ctlr:WindDirectionView cal:Bind.Model="WeatherReport.WinApp.ViewModels.WindDirectionViewModel"/-->
+                    <ContentControl x:Name="WindDirectionViewModel" />
                 </Canvas>
             </Grid>
         </Viewbox>

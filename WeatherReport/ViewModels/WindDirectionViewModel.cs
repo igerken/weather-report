@@ -2,11 +2,10 @@
 using System.Windows;
 using Caliburn.Micro;
 using WeatherReport.Core.Events;
-using WeatherReport.MVVM;
 
 namespace WeatherReport.WinApp.ViewModels;
 
-public class WindDirectionViewModel : ObservableObject, IHandle<IWeatherUpdated>
+public class WindDirectionViewModel : PropertyChangedBase, IHandle<IWeatherUpdated>
 {
     private const double BEAUFORT_HURRICANE = 12.0;
     private const double BEAUFORT_GALE = 8.0;
@@ -17,6 +16,8 @@ public class WindDirectionViewModel : ObservableObject, IHandle<IWeatherUpdated>
     private const float NORMAL_VAL = 0.6F;
     private const float NORMAL_SAT_DIFF = 0.2F;
     private const float NORMAL_VAL_DIFF = 0.35F;
+
+	private readonly IEventAggregator _eventAggregator;
 
     private double _centerX;
     private double _centerY;
@@ -48,11 +49,14 @@ public class WindDirectionViewModel : ObservableObject, IHandle<IWeatherUpdated>
         get { return _arrowRightWingPoints; }
     }
 
-    public WindDirectionViewModel(double centerX, double centerY, double radius)
+    public WindDirectionViewModel(IEventAggregator eventAggregator)
     {
-        _centerX = centerX;
-        _centerY = centerY;
-        _radius = radius;
+        _eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+        _eventAggregator.SubscribeOnPublishedThread(this);
+
+        _centerX = 50;
+        _centerY = 50;
+        _radius = 40;
 
         _arrowLeftWingColor = GetColorForNormalDirection(-0.25*Math.PI);
         _arrowRightWingColor = GetColorForNormalDirection(0.75 * Math.PI);
@@ -101,10 +105,10 @@ public class WindDirectionViewModel : ObservableObject, IHandle<IWeatherUpdated>
 
             _arrowLeftWingColor = GetColorForNormalDirection(windDirection.Value - 1.5 * Math.PI);
             _arrowRightWingColor = GetColorForNormalDirection(windDirection.Value - .5 * Math.PI);
-            RaisePropertyChanged("ArrowLeftWingColor");
-            RaisePropertyChanged("ArrowRightWingColor");
-            RaisePropertyChanged("ArrowLeftWingPoints");
-            RaisePropertyChanged("ArrowRightWingPoints");
+            NotifyOfPropertyChange(() => ArrowLeftWingColor);
+            NotifyOfPropertyChange(() => ArrowRightWingColor);
+            NotifyOfPropertyChange(() => ArrowLeftWingPoints);
+            NotifyOfPropertyChange(() => ArrowRightWingPoints);
         }
         else
         {
@@ -122,8 +126,8 @@ public class WindDirectionViewModel : ObservableObject, IHandle<IWeatherUpdated>
                     _arrowRightWingPoints.RemoveAt(1);
                 }
             }
-            RaisePropertyChanged("ArrowLeftWingPoints");
-            RaisePropertyChanged("ArrowRightWingPoints");
+            NotifyOfPropertyChange(() => ArrowLeftWingPoints);
+            NotifyOfPropertyChange(() => ArrowRightWingPoints);
         }
     }
 
