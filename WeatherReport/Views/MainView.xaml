@@ -164,7 +164,6 @@
                 </StackPanel>
                 
                 <Canvas Width="100" Height="100">
-                    <!--ctlr:WindDirectionView cal:Bind.Model="WeatherReport.WinApp.ViewModels.WindDirectionViewModel"/-->
                     <ContentControl x:Name="WindDirectionViewModel" />
                 </Canvas>
             </Grid>

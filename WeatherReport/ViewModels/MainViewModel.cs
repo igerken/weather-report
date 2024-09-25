@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using System.Windows.Threading;
 
 using Caliburn.Micro;
 using Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro;
@@ -30,8 +29,6 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 	private readonly ILogger<MainViewModel> _logger;
 
 	private readonly Interfaces.IUserSettings _userSettings;
-
-	//private readonly WindDirectionViewModel _windDirectionViewModel;
 
 	private bool _isSettingsLayerVisible = false;
 	private bool _isDownloadProgressLayerVisible;
@@ -177,12 +174,6 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		_weatherInfo = EmptyWeatherInfo.Instance;
 
 		_settings = new AppSettings { RefreshIntervalSeconds = 10 };
- 
-		int refreshMs = 1000 * _settings.RefreshIntervalSeconds;
-		/*
-		_serviceRefreshTimer = new Timer(callback => GetWeather(false), null, refreshMs, refreshMs);
-
-		*/
 		_eventAggregator.SubscribeOnPublishedThread(this);
 	}
 /*

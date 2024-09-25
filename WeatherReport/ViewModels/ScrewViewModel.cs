@@ -63,6 +63,10 @@ public class ScrewViewModel : ObservableObject
         }
     }
 
+    public ScrewViewModel() : this(0.0)
+    {
+    }
+
     public ScrewViewModel(double size)
     {
         _size = size;

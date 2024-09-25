@@ -2,19 +2,21 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vm="clr-namespace:WeatherReport.WinApp.ViewModels"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="50">
 
     <UserControl.Resources>
+        <vm:ScrewViewModel x:Key="ScrewViewModel" />
         <LinearGradientBrush x:Key="ScrewEdgeBrush">
             <GradientStop Offset="0" Color="#2E3D4C"/>
             <GradientStop Offset="1" Color="#B6D2EF"/>
         </LinearGradientBrush>
     </UserControl.Resources>
 
-
-    <Canvas Width="{Binding Path=Size, ElementName=ScrewRoot}" Height="{Binding Path=Size, ElementName=ScrewRoot}">
+    <Canvas Width="{Binding Path=Size, ElementName=ScrewRoot}" Height="{Binding Path=Size, ElementName=ScrewRoot}"
+            DataContext="{StaticResource ScrewViewModel}" x:Name="root">
         <Line X1="{Binding SlitX1}" Y1="{Binding SlitY1}" X2="{Binding SlitX2}" Y2="{Binding SlitY2}" 
                 StrokeThickness="0.6" Stroke="#425364"  />
         <Ellipse StrokeThickness="0.4" Stroke="{StaticResource ScrewEdgeBrush}"
