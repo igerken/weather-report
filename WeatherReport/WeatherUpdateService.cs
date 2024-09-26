@@ -29,7 +29,7 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
 
         _location = new DummyLocation();
 
-        _weatherInfoUpdateTimer = new System.Timers.Timer(2000);
+        _weatherInfoUpdateTimer = new System.Timers.Timer(20000);
         _weatherInfoUpdateTimer.Elapsed += (s, e) => UpdateWeather();
         _weatherInfoUpdateTimer.AutoReset = true;
         _weatherInfoUpdateTimer.Enabled = true;

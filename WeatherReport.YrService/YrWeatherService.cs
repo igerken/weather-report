@@ -22,16 +22,17 @@ public class YrWeatherService : IWeatherService
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 		_locationSettingsOptions = locationSettingsOptions ?? throw new ArgumentNullException(nameof(locationSettingsOptions));
 
-        _jsonSerializerOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };      
+        _jsonSerializerOptions = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };      
     }
 
     public async Task<IWeatherInfo> GetWeather(ILocation location)
     {
         //https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=50.0875&lon=14.4214
-        _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        //_httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+        _httpClient.DefaultRequestHeaders.Add("User-Agent", "WeatherReport");
         CompactResponse response = 
             await _httpClient.GetFromJsonAsync<CompactResponse>("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=50.0875&lon=14.4214", _jsonSerializerOptions);
-        Details? details = response.Properties.TimeSeries.FirstOrDefault().Data.Instant.Details;
+        Details? details = response?.Properties?.Timeseries?.FirstOrDefault()?.Data?.Instant?.Details;
         if(details != null)
         {
             return new YrWeatherInfo((double)details.AirTemperature, 3.0, (double)details.WindSpeed);
