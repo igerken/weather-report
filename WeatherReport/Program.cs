@@ -5,12 +5,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using Caliburn.Micro;
 using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 using Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro;
 using WeatherReport.WinApp.ViewModels;
 using WeatherReport.Core;
+using WeatherReport.Core.Settings;
 using WeatherReport.YrService;
-using Caliburn.Micro;
 using WeatherReport.Data;
 using WeatherReport.WinApp.Interfaces;
 
@@ -42,6 +43,7 @@ public static class Program
                 serviceCollection.AddSingleton<IWeatherService, YrWeatherService>();
                 serviceCollection.AddSingleton<IUserSettings>(new UserSettings());
                 serviceCollection.AddOptions<List<LocationSettings>>().Bind(ctx.Configuration.GetSection(nameof(LocationSettings)));
+                serviceCollection.AddHttpClient();
             })
             .UseConsoleLifetime()
             .UseWpfLifetime()
