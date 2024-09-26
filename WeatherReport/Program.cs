@@ -25,13 +25,13 @@ public static class Program
     public static Task Main(string[] args)
     {
         var executableLocation = Path.GetDirectoryName(typeof(Program).Assembly.Location);
-            
+           
         var host = new HostBuilder()
             .ConfigureWpf()
             .ConfigureLogging()
             .ConfigureConfiguration(args)
             .ConfigureCaliburnMicro<MainViewModel>()
-            .ConfigureServices(serviceCollection =>
+            .ConfigureServices((ctx, serviceCollection) =>
             {
                 serviceCollection.AddTransient<DownloadProgressViewModel>();
                 serviceCollection.AddTransient<UserSettingsViewModel>();
@@ -41,6 +41,7 @@ public static class Program
                 serviceCollection.AddSingleton<IEventAggregator, EventAggregator>();
                 serviceCollection.AddSingleton<IWeatherService, YrWeatherService>();
                 serviceCollection.AddSingleton<IUserSettings>(new UserSettings());
+                serviceCollection.AddOptions<List<LocationSettings>>().Bind(ctx.Configuration.GetSection(nameof(LocationSettings)));
             })
             .UseConsoleLifetime()
             .UseWpfLifetime()

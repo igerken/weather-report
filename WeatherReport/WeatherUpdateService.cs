@@ -1,8 +1,10 @@
 using System.Windows.Threading;
 using Caliburn.Micro;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using WeatherReport.Core;
 using WeatherReport.Core.Events;
+using WeatherReport.Data;
 
 namespace WeatherReport;
 
@@ -12,6 +14,8 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
 
     private readonly IEventAggregator _eventAggregator;
 
+    private readonly IOptions<List<LocationSettings>> _locationSettingsOptions;
+
     private readonly ILogger<WeatherUpdateService> _logger;
     
 	private readonly System.Timers.Timer _weatherInfoUpdateTimer;
@@ -19,10 +23,11 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
     private ILocation? _location;
 
     public WeatherUpdateService(IWeatherService weatherService, IEventAggregator eventAggregator,
-        ILogger<WeatherUpdateService> logger)
+        IOptions<List<LocationSettings>> locationSettingsOptions, ILogger<WeatherUpdateService> logger)
     {
 		_weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
+		_locationSettingsOptions = locationSettingsOptions ?? throw new ArgumentNullException(nameof(locationSettingsOptions));
         _logger = logger;
 
         _location = new DummyLocation();
@@ -44,11 +49,12 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
     {
         try
         {
+            var aa = _locationSettingsOptions.Value;
             if(_location == null)
                 return;
 
             var winfo = await _weatherService.GetWeather(_location);
-            await _eventAggregator.PublishOnUIThreadAsync(new WetherUpdated(winfo));
+            await _eventAggregator.PublishOnUIThreadAsync(new WeatherUpdated(winfo));
         }
         catch (Exception ex)
         {
@@ -56,7 +62,7 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
         }
     }
 
-    private class WetherUpdated(IWeatherInfo weather) : IWeatherUpdated
+    private class WeatherUpdated(IWeatherInfo weather) : IWeatherUpdated
     {
         public IWeatherInfo Weather => weather;
     }
