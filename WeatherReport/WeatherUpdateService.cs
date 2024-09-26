@@ -14,8 +14,6 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
 
     private readonly IEventAggregator _eventAggregator;
 
-    private readonly IOptions<List<LocationSettings>> _locationSettingsOptions;
-
     private readonly ILogger<WeatherUpdateService> _logger;
     
 	private readonly System.Timers.Timer _weatherInfoUpdateTimer;
@@ -23,11 +21,10 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
     private ILocation? _location;
 
     public WeatherUpdateService(IWeatherService weatherService, IEventAggregator eventAggregator,
-        IOptions<List<LocationSettings>> locationSettingsOptions, ILogger<WeatherUpdateService> logger)
+        ILogger<WeatherUpdateService> logger)
     {
 		_weatherService = weatherService ?? throw new ArgumentNullException(nameof(weatherService));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-		_locationSettingsOptions = locationSettingsOptions ?? throw new ArgumentNullException(nameof(locationSettingsOptions));
         _logger = logger;
 
         _location = new DummyLocation();
@@ -49,7 +46,6 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
     {
         try
         {
-            var aa = _locationSettingsOptions.Value;
             if(_location == null)
                 return;
 

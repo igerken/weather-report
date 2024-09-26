@@ -1,4 +1,4 @@
-namespace WeatherReport.Data;
+namespace WeatherReport.Core.Settings;
 
 public class LocationSettings
 {
