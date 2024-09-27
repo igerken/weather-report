@@ -10,6 +10,6 @@ public class UserSettings : IUserSettings
 
     public Task Save()
     {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

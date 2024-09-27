@@ -1,13 +1,15 @@
-﻿namespace WeatherReport.WinApp.Events;
+﻿using WeatherReport.Core;
+using WeatherReport.Core.Events;
+using WeatherReport.WinApp.Data;
 
-public class SettingsOkayedEventData
+namespace WeatherReport.WinApp.Events;
+
+public class SettingsOkayedEventData : ILocationChanged
 {
-	public string CountryCode { get; private set; }
-	public string City { get; private set; }
+    public ILocation Location { get; }
 
-	public SettingsOkayedEventData(string countryCode, string city)
+    public SettingsOkayedEventData(string countryCode, string city)
 	{
-		CountryCode = countryCode;
-		City = city;
+		Location = new Location { Country = countryCode, City = city };
 	}
 }

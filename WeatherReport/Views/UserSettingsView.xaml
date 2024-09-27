@@ -1,12 +1,11 @@
-﻿<UserControl x:Class="WeatherReport.WinApp.Views.UserSettingsControl"
+﻿<UserControl x:Class="WeatherReport.WinApp.Views.UserSettingsView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="240" d:DesignWidth="240"
-             cal:Bind.Model="WeatherReport.WinApp.ViewModels.UserSettingsViewModel">
+             d:DesignHeight="240" d:DesignWidth="240">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
         <Style TargetType="{x:Type Image}">
@@ -19,18 +18,14 @@
     </UserControl.Resources>
     
     <StackPanel HorizontalAlignment="Stretch" VerticalAlignment="Bottom" 
-                Background="White" Opacity="0.8">
+            Background="White" Opacity="0.8">
         <Label VerticalAlignment="Top" HorizontalAlignment="Left">Country</Label>
         <ComboBox VerticalAlignment="Top" Height="23"
-                      DisplayMemberPath="Name" 
-                      ItemsSource="{Binding Countries}" SelectedItem="{Binding Path=SelectedCountry, Mode=TwoWay}" />
+            ItemsSource="{Binding Countries}" SelectedItem="{Binding Path=SelectedCountry, Mode=TwoWay}" />
         <Label HorizontalAlignment="Left" Width="120" Height="28">City</Label>
         <ComboBox Height="23" VerticalAlignment="Top" 
-                      ItemsSource="{Binding Cities}" SelectedItem="{Binding Path=SelectedCity, Mode=TwoWay}"
-                      Visibility="{Binding Path=IsCityListAvailable, Converter={StaticResource BooleanToVisibility}}" />
-        <Label VerticalAlignment="Top" HorizontalAlignment="Left" Height="23" Padding="6,2"
-                   Content="{Binding CityListRetrievalErrorMessage}" FontWeight="Bold" Foreground="#E55B49"
-                   Visibility="{Binding Path=IsCityListUnavailable, Converter={StaticResource BooleanToVisibility}}"/>
+            ItemsSource="{Binding Cities}" SelectedItem="{Binding Path=SelectedCity, Mode=TwoWay}"
+            Visibility="{Binding Path=IsCityListAvailable, Converter={StaticResource BooleanToVisibility}}" />
 
         <Grid Margin="0,8,0,4">
             <Grid.ColumnDefinitions>

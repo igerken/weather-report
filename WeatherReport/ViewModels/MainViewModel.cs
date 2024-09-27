@@ -22,6 +22,8 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 
 	private readonly IWpfContext _wpfContext;
 
+    private readonly IWindowManager _windowManager;
+
 	private readonly IServiceProvider _serviceProvider;
 
 	private readonly IEventAggregator _eventAggregator;
@@ -45,6 +47,9 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 
 	public WindDirectionViewModel WindDirectionViewModel =>
 		(WindDirectionViewModel)_serviceProvider.GetService(typeof(WindDirectionViewModel))!;
+
+	public UserSettingsViewModel UserSettingsViewModel =>
+		(UserSettingsViewModel)_serviceProvider.GetService(typeof(UserSettingsViewModel))!;
 
 	public IWeatherInfo WeatherInfo
 	{
@@ -155,11 +160,12 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		get { return _settingsCommand; }
 	}
 
-	public MainViewModel(IWpfContext wpfContext, IServiceProvider serviceProvider, 
-		IEventAggregator eventAggregator, 
+	public MainViewModel(IWpfContext wpfContext, IWindowManager windowManager,
+		IServiceProvider serviceProvider, IEventAggregator eventAggregator, 
 		IUserSettings userSettings, ILogger<MainViewModel> logger)
 	{
 		_wpfContext = wpfContext ?? throw new ArgumentNullException(nameof(wpfContext));
+		_windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
 		_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 		_userSettings = userSettings;
@@ -215,6 +221,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 	private void SettingsButton_Clicked()
 	{
 		IsSettingsLayerVisible = true;
+		//_windowManager.ShowWindowAsync((UserSettingsViewModel)_serviceProvider.GetService(typeof(UserSettingsViewModel))!);
 		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
 	}
 
@@ -237,7 +244,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 
 	public async Task HandleAsync(SettingsOkayedEventData message, CancellationToken cancellationToken)
 	{
-		_displayedCity = message.City;
+		_displayedCity = message.Location.City;
 		ResetInfoDisplay();
 		IsSettingsLayerVisible = false;
 		WeatherInfo = EmptyWeatherInfo.Instance;

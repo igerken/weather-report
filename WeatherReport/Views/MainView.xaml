@@ -172,7 +172,7 @@
         <ctlr:DownloadProgressControl
             Visibility="{Binding Path=IsDownloadProgressLayerVisible, Converter={StaticResource BooleanToVisibility}}"/>
 
-        <ctlr:UserSettingsControl
+        <ContentControl x:Name="UserSettingsViewModel"
             Visibility="{Binding Path=IsSettingsLayerVisible, Converter={StaticResource BooleanToVisibility}}"/>
     </Grid>
 </Window>
