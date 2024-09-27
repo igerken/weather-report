@@ -13,8 +13,8 @@ using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 
 namespace WeatherReport.WinApp.ViewModels;
 
-public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
-	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>, IHandle<IWeatherUpdated>
+public class MainViewModel : Screen, ICaliburnMicroShell,
+	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>, IHandle<IWeatherUpdated>, IHandle<ILocationChanged>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
 
@@ -164,17 +164,19 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 		_userSettings = userSettings;
 		_logger = logger;
-/*
-		_yrWeatherDataStorage = yrWeatherDataStorage;
-		_globalDataContainer = globalDataContainer;
-		_settings = settings;
-*/
+
 		_settingsCommand = new RelayCommand(SettingsButton_Clicked);
 
 		_weatherInfo = EmptyWeatherInfo.Instance;
 
 		_settings = new AppSettings { RefreshIntervalSeconds = 10 };
 		_eventAggregator.SubscribeOnPublishedThread(this);
+	}
+
+	protected override void OnViewLoaded(object view)
+	{
+		base.OnViewLoaded(view);
+		_eventAggregator.PublishOnCurrentThreadAsync(new LocationChanged(new Location { Country = "CZ", City = "Praha"}));
 	}
 /*
 	public void Init()
@@ -215,40 +217,7 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		IsSettingsLayerVisible = true;
 		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
 	}
-/*
-	private async Task GetWeather(bool updateImmediately)
-	{
-		if (DisplayedCountry != null && DisplayedCity != null)
-		{
-			Progress<DownloadProgressData> progress = new Progress<DownloadProgressData>(
-				progressData => _eventAggregator.PublishOnUIThreadAsync(new DownloadProgressChangedEventData(progressData))
-			);
-			try
-			{
-				YrCityData city = DisplayedCountry.Cities.FirstOrDefault(c => c.Name == DisplayedCity);
-				if (city != null)
-				{
-					IWeatherInfo weatherInfo = await _weatherService.GetWeather(city.DataUrl, progress).ConfigureAwait(false);
-					if (updateImmediately)
-					{
-						WeatherInfo = weatherInfo;
-						_isNewWeatherInfoRetrieved = false;
-					}
-					else
-					{
-						_newWeatherInfo = weatherInfo;
-						_isNewWeatherInfoRetrieved = true;
-					}
-				}
-			}
-			catch (WeatherServiceException wex)
-			{
-				_newWeatherRetrievalError = GetWeatherServiceExceptionDisplayedMessage(wex);
-				_logger.LogError(wex, "GetWeather: Failed to retrieve weather info");
-			}                
-		}
-	}        
-*/
+
 	private void SetInfoDisplayError(string message)
 	{
 		InfoDisplayStatus = ViewModels.InfoDisplayStatus.Error;
@@ -290,6 +259,12 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		return Task.CompletedTask;
     }
 
+    public Task HandleAsync(ILocationChanged message, CancellationToken cancellationToken)
+    {
+        DisplayedCity = message.Location.City;
+		return Task.CompletedTask;
+    }
+
     private class EmptyWeatherInfo : IWeatherInfo
 	{
 		public double? Temperature => null;
@@ -299,5 +274,17 @@ public class MainViewModel : PropertyChangedBase, ICaliburnMicroShell,
 		public double? WindSpeed => null;
 
 		public static EmptyWeatherInfo Instance { get; private set; } = new EmptyWeatherInfo();
-	}
+	}	
+
+    private class Location : ILocation
+    {
+        public string Country { get; set; } = string.Empty;
+
+        public string City { get; set; } = string.Empty;
+    }
+
+    private class LocationChanged(ILocation _location) : ILocationChanged
+    {
+        public ILocation Location => _location;
+    }
 }

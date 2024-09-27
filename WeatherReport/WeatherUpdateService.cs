@@ -1,12 +1,9 @@
-using System.Windows.Threading;
 using Caliburn.Micro;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using WeatherReport.Core;
 using WeatherReport.Core.Events;
-using WeatherReport.Data;
 
-namespace WeatherReport;
+namespace WeatherReport.WinApp;
 
 public class WeatherUpdateService : IHandle<ILocationChanged>
 {
@@ -27,12 +24,12 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
         _logger = logger;
 
-        _location = new DummyLocation();
-
-        _weatherInfoUpdateTimer = new System.Timers.Timer(10000);
+        _weatherInfoUpdateTimer = new System.Timers.Timer(30000);
         _weatherInfoUpdateTimer.Elapsed += (s, e) => UpdateWeather();
         _weatherInfoUpdateTimer.AutoReset = true;
         _weatherInfoUpdateTimer.Enabled = true;
+        
+		_eventAggregator.SubscribeOnPublishedThread(this);
     }
 
     public Task HandleAsync(ILocationChanged message, CancellationToken cancellationToken)
@@ -61,12 +58,5 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
     private class WeatherUpdated(IWeatherInfo weather) : IWeatherUpdated
     {
         public IWeatherInfo Weather => weather;
-    }
-
-    private class DummyLocation : ILocation
-    {
-        public string Country => "CZ";
-
-        public string City => "Praha";
     }
 }
