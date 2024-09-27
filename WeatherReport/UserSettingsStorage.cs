@@ -1,28 +1,27 @@
+using System;
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Text.Json;
+using WeatherReport.Data;
 using WeatherReport.WinApp.Interfaces;
 
-namespace WeatherReport.Data;
+namespace WeatherReport.WinApp;
 
-public class UserSettings : IUserSettings
+public class UserSettingsStorage : IUserSettingsStorage
 {
     private const string SettingsFileName = "WeatherReportSettings.json";
 
-    public string? SelectedCountry { get; set; }
-    public string? SelectedCity { get; set; }
-
-    public async Task Save()
+    public async Task Save(IUserSettings settings)
     {
         IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 
         using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(SettingsFileName, FileMode.Create, isoStore))
         {
-            await JsonSerializer.SerializeAsync(isoStream, this);
+            await JsonSerializer.SerializeAsync(isoStream, settings);
         }
     }
 
-    public async Task Load()
+    public async Task<IUserSettings?> Load()
     {
         IsolatedStorageFile isoStore = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 
@@ -30,13 +29,10 @@ public class UserSettings : IUserSettings
         {
             using (IsolatedStorageFileStream isoStream = new IsolatedStorageFileStream(SettingsFileName, FileMode.Open, isoStore))
             {
-                UserSettings? loaded = await JsonSerializer.DeserializeAsync<UserSettings>(isoStream);
-                if(loaded != null)
-                {
-                    SelectedCountry = loaded.SelectedCountry;
-                    SelectedCity = loaded.SelectedCity;
-                }
+                return await JsonSerializer.DeserializeAsync<UserSettings>(isoStream);
             }
         }
+
+        return null;
     }
 }

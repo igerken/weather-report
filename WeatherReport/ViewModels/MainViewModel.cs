@@ -10,6 +10,7 @@ using WeatherReport.Core;
 using WeatherReport.MVVM;
 using WeatherReport.Core.Events;
 using Dapplo.Microsoft.Extensions.Hosting.Wpf;
+using WeatherReport.Data;
 
 namespace WeatherReport.WinApp.ViewModels;
 
@@ -30,7 +31,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 	
 	private readonly ILogger<MainViewModel> _logger;
 
-	private readonly Interfaces.IUserSettings _userSettings;
+	private readonly IUserSettings _userSettings;
 
 	private bool _isSettingsLayerVisible = false;
 	private bool _isDownloadProgressLayerVisible;
@@ -115,7 +116,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		get
 		{
 			return _weatherInfo.Temperature.HasValue ?
-				String.Format("{0,4:0.0}°C", _weatherInfo.Temperature.Value) : "--.-°C";
+                string.Format("{0,4:0.0}°C", _weatherInfo.Temperature.Value) : "--.-°C";
 		}
 	}
 
@@ -168,7 +169,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		_windowManager = windowManager ?? throw new ArgumentNullException(nameof(windowManager));
 		_serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
 		_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
-		_userSettings = userSettings;
+		_userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 		_logger = logger;
 
 		_settingsCommand = new RelayCommand(SettingsButton_Clicked);
@@ -179,10 +180,30 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		_eventAggregator.SubscribeOnPublishedThread(this);
 	}
 
-	protected override void OnViewLoaded(object view)
+	protected override async void OnViewLoaded(object view)
 	{
 		base.OnViewLoaded(view);
-		_eventAggregator.PublishOnCurrentThreadAsync(new LocationChanged(new Location { Country = "CZ", City = "Praha"}));
+		try
+		{
+			await _userSettings.Load();
+			if(_userSettings != null && _userSettings.SelectedCity != null)
+			{
+				DisplayedCity = _userSettings.SelectedCity;
+				ResetInfoDisplay();
+			}
+			RaiseLocationChanged();
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(ex, "Failed loading user settings");
+		}		
+	}
+
+	private void RaiseLocationChanged()
+	{
+		if(_userSettings != null && _userSettings.SelectedCountry != null && _userSettings.SelectedCity != null)
+			_eventAggregator.PublishOnCurrentThreadAsync(
+				new LocationChanged(new Location { Country = _userSettings.SelectedCountry, City = _userSettings.SelectedCity}));
 	}
 /*
 	public void Init()
@@ -248,10 +269,16 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		ResetInfoDisplay();
 		IsSettingsLayerVisible = false;
 		WeatherInfo = EmptyWeatherInfo.Instance;
-		IsDownloadProgressLayerVisible = true;
-		await _eventAggregator.PublishOnUIThreadAsync(new DownloadRequestedEventData());
-		//await GetWeather(true);
-		IsDownloadProgressLayerVisible = false;
+		try
+		{
+			await _userSettings.Save();
+		}
+		catch (Exception ex)
+		{
+			_logger.LogError(ex, "Failed saving user settings");
+		}
+		
+		RaiseLocationChanged();
 	}
 
 	public Task HandleAsync(SettingsCancelledEventData message, CancellationToken cancellationToken)

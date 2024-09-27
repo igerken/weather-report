@@ -5,5 +5,7 @@ public interface IUserSettings
     string? SelectedCountry { get; set; }
     string? SelectedCity { get; set; }
 
+    Task Load();
+
     Task Save();
 }
