@@ -29,7 +29,7 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
 
         _location = new DummyLocation();
 
-        _weatherInfoUpdateTimer = new System.Timers.Timer(20000);
+        _weatherInfoUpdateTimer = new System.Timers.Timer(10000);
         _weatherInfoUpdateTimer.Elapsed += (s, e) => UpdateWeather();
         _weatherInfoUpdateTimer.AutoReset = true;
         _weatherInfoUpdateTimer.Enabled = true;
@@ -65,8 +65,8 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
 
     private class DummyLocation : ILocation
     {
-        public string Country => "";
+        public string Country => "CZ";
 
-        public string City => "";
+        public string City => "Praha";
     }
 }

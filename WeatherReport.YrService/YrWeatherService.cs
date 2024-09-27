@@ -27,17 +27,21 @@ public class YrWeatherService : IWeatherService
 
     public async Task<IWeatherInfo> GetWeather(ILocation location)
     {
-        //https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=50.0875&lon=14.4214
-        //_httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-        _httpClient.DefaultRequestHeaders.Add("User-Agent", "WeatherReport");
-        CompactResponse response = 
-            await _httpClient.GetFromJsonAsync<CompactResponse>("https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=50.0875&lon=14.4214", _jsonSerializerOptions);
-        Details? details = response?.Properties?.Timeseries?.FirstOrDefault()?.Data?.Instant?.Details;
-        if(details != null)
+        LocationSettings? locationSettings = _locationSettingsOptions.Value.FirstOrDefault(
+            ls => ls.Country == location.Country && ls.City == location.City);
+        if(locationSettings != null)
         {
-            return new YrWeatherInfo((double)details.AirTemperature, 3.0, (double)details.WindSpeed);
+            string url = $"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={locationSettings.Lat}&lon={locationSettings.Long}";
+            CompactResponse? response = 
+                await _httpClient.GetFromJsonAsync<CompactResponse>(url, _jsonSerializerOptions);
+            Details? details = response?.Properties?.Timeseries?.FirstOrDefault()?.Data?.Instant?.Details;
+            if(details != null)
+            {
+                double windDirection = Math.PI * (double)details.WindFromDirection / 180.0;
+                return new YrWeatherInfo((double)details.AirTemperature, windDirection, (double)details.WindSpeed);
+            }
         }
 
-        return new YrWeatherInfo(20.0, 3.0, 5.0);
+        return YrWeatherInfo.Empty;
     }
 }
