@@ -40,7 +40,6 @@ public static class Program
                 serviceCollection.AddSingleton<WeatherUpdateService>();
                 serviceCollection.AddSingleton<IWindowManager, WindowManager>();
                 serviceCollection.AddSingleton<IEventAggregator, EventAggregator>();
-                serviceCollection.AddSingleton<IUserSettingsStorage, UserSettingsStorage>();
                 serviceCollection.AddSingleton<IUserSettings>(new UserSettings());
                 serviceCollection.AddOptions<List<LocationSettings>>().Bind(ctx.Configuration.GetSection(nameof(LocationSettings)));
                 serviceCollection.AddYrWeatherService();
