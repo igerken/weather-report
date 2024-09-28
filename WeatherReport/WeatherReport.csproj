@@ -28,8 +28,10 @@
   </ItemGroup>
 
   <ItemGroup>
-   <None Update="appsettings.json">
-     <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-   </None>
-</ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <Resource Include="Resources\Checkmark.png" />   
+    <Resource Include="Resources\X.png" />
+  </ItemGroup>
 </Project>

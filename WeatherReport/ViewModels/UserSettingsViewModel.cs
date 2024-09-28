@@ -139,6 +139,8 @@ namespace WeatherReport.WinApp.ViewModels
 			_countries = _locationSettingsOptions.Value.Select(s => s.Country).Distinct().OrderBy(c => c).ToList();
             _cities = new ObservableCollection<string>();
 
+            SelectedCountry = userSettings?.SelectedCountry;
+
 			_eventAggregator.SubscribeOnPublishedThread(this);
 		}
 

@@ -168,9 +168,6 @@
                 </Canvas>
             </Grid>
         </Viewbox>
-        
-        <ctlr:DownloadProgressControl
-            Visibility="{Binding Path=IsDownloadProgressLayerVisible, Converter={StaticResource BooleanToVisibility}}"/>
 
         <ContentControl x:Name="UserSettingsViewModel"
             Visibility="{Binding Path=IsSettingsLayerVisible, Converter={StaticResource BooleanToVisibility}}"/>

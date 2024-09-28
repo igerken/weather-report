@@ -36,11 +36,11 @@
 
             <Button Grid.Column="0" HorizontalAlignment="Right"
                         Command="{Binding SettingsOkCommand}">
-                <Image Source="Resources/Checkmark.png" Width="13" Height="13" />
+                <Image Source="/WeatherReport;component/Resources/Checkmark.png" Width="13" Height="13" />
             </Button>
             <Button Grid.Column="2" HorizontalAlignment="Left"
                         Command="{Binding SettingsCancelCommand}">
-                <Image Source="Resources/X.png" Width="13" Height="13" />
+                <Image Source="/WeatherReport;component/Resources/X.png" Width="13" Height="13" />
             </Button>
         </Grid>
     </StackPanel>
