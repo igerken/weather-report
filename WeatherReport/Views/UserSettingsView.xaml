@@ -24,8 +24,7 @@
             ItemsSource="{Binding Countries}" SelectedItem="{Binding Path=SelectedCountry, Mode=TwoWay}" />
         <Label HorizontalAlignment="Left" Width="120" Height="28">City</Label>
         <ComboBox Height="23" VerticalAlignment="Top" 
-            ItemsSource="{Binding Cities}" SelectedItem="{Binding Path=SelectedCity, Mode=TwoWay}"
-            Visibility="{Binding Path=IsCityListAvailable, Converter={StaticResource BooleanToVisibility}}" />
+            ItemsSource="{Binding Cities}" SelectedItem="{Binding Path=SelectedCity, Mode=TwoWay}" />
 
         <Grid Margin="0,8,0,4">
             <Grid.ColumnDefinitions>

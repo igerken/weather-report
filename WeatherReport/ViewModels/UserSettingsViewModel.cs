@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 using Caliburn.Micro;
@@ -14,6 +10,7 @@ using WeatherReport.MVVM;
 using WeatherReport.WinApp.Interfaces;
 using Microsoft.Extensions.Options;
 using WeatherReport.Core.Settings;
+using System.ComponentModel;
 
 namespace WeatherReport.WinApp.ViewModels
 {
@@ -25,33 +22,20 @@ namespace WeatherReport.WinApp.ViewModels
 
         private readonly IOptions<List<LocationSettings>> _locationSettingsOptions;
 		private readonly ILogger<UserSettingsViewModel> _logger;
-        private IUserSettings _userSettings;
-
-        private RelayCommand _settingsOkCommand;
-        private RelayCommand _settingsCancelCommand;
+        private readonly IUserSettings _userSettings;
 
         private List<string> _countries;
 
-        private ObservableCollection<string> _cities;
-        //private string _initialCity;
-
+        private string? _initialCountry;
+        private string? _initialCity;
         
         private string? _selectedCountry;
         private string? _selectedCity;
-
-        private bool _isCityListAvailable = true;
         private string _cityListRetrievalErrorMessage = DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE;
 
-        private object _cityListLock = new object();
+        public ICommand SettingsOkCommand { get; }
 
-        public ICommand SettingsOkCommand
-        {
-            get { return _settingsOkCommand; }
-        }
-        public ICommand SettingsCancelCommand
-        {
-            get { return _settingsCancelCommand; }
-        }
+        public ICommand SettingsCancelCommand { get; }
 
         public List<string> Countries
 		{
@@ -72,10 +56,7 @@ namespace WeatherReport.WinApp.ViewModels
             }
         }
 
-        public ObservableCollection<string> Cities
-        {
-            get { return _cities; }
-        }
+        public ObservableCollection<string> Cities { get; }
 
         public string? SelectedCity
         {
@@ -89,26 +70,6 @@ namespace WeatherReport.WinApp.ViewModels
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
-        }
-
-        public bool IsCityListAvailable
-        {
-            get { return _isCityListAvailable; }
-            set
-            {
-                if (_isCityListAvailable != value)
-                {
-                    _isCityListAvailable = value;
-					NotifyOfPropertyChange(() => IsCityListAvailable);
-					NotifyOfPropertyChange(() => IsCityListUnavailable);
-                    CommandManager.InvalidateRequerySuggested();
-                }
-            }
-        }
-
-        public bool IsCityListUnavailable
-        {
-            get { return !IsCityListAvailable; }
         }
 
         public string CityListRetrievalErrorMessage
@@ -127,52 +88,71 @@ namespace WeatherReport.WinApp.ViewModels
         public UserSettingsViewModel(IUserSettings userSettings, IEventAggregator eventAggregator, 
             IOptions<List<LocationSettings>> locationSettingsOptions, ILogger<UserSettingsViewModel> logger)
         {
-            _userSettings = userSettings;
+            _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 			_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 		    _locationSettingsOptions = locationSettingsOptions ?? throw new ArgumentNullException(nameof(locationSettingsOptions));
 			_logger = logger;
 
-            _settingsOkCommand = new RelayCommand(SettingsOkButton_Clicked, 
+            SettingsOkCommand = new RelayCommand(SettingsOkButton_Clicked, 
                 () => !string.IsNullOrEmpty(SelectedCity));
-            _settingsCancelCommand = new RelayCommand(SettingsCancelButton_Clicked);
+            SettingsCancelCommand = new RelayCommand(SettingsCancelButton_Clicked);
 
 			_countries = _locationSettingsOptions.Value.Select(s => s.Country).Distinct().OrderBy(c => c).ToList();
-            _cities = new ObservableCollection<string>();
+            Cities = new ObservableCollection<string>();
 
-            SelectedCountry = userSettings?.SelectedCountry;
+            _initialCountry = userSettings.SelectedCountry;
+            SelectedCountry = userSettings.SelectedCountry;
+
+            _initialCity = userSettings.SelectedCity;
+            SelectedCity = userSettings.SelectedCity;
+
+            _userSettings.PropertyChanged += HandleUserSettingsChanged;
 
 			_eventAggregator.SubscribeOnPublishedThread(this);
 		}
+
+        private void HandleUserSettingsChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            switch(e.PropertyName)
+            {
+                case nameof(SelectedCountry):
+                    SelectedCountry = _userSettings.SelectedCountry;
+                    break;
+                case nameof(SelectedCity):
+                    SelectedCity = _userSettings.SelectedCity;
+                    break;
+            }
+        }
 
         private void SettingsOkButton_Clicked()
         {
             _userSettings.SelectedCountry = SelectedCountry;
             _userSettings.SelectedCity = SelectedCity;
 
-			_eventAggregator.PublishOnUIThreadAsync(new SettingsOkayedEventData(SelectedCountry, SelectedCity));
+			_eventAggregator.PublishOnUIThreadAsync(new SettingsOkayedEventData(SelectedCountry!, SelectedCity!));
         }
 
         private void SettingsCancelButton_Clicked()
-        {/*
+        {
             _selectedCountry = _initialCountry;
             _selectedCity = _initialCity;
 
-            UpdateCityList(false);
+            UpdateCityList();
 			NotifyOfPropertyChange(() => SelectedCountry);
 			NotifyOfPropertyChange(() => SelectedCity);
 
-			_eventAggregator.PublishOnUIThread(new SettingsCancelledEventData());*/
+			_eventAggregator.PublishOnUIThreadAsync(new SettingsCancelledEventData());
 		}
 
         private void UpdateCityList()
         {
-            _cities.Clear();
+            Cities.Clear();
             _locationSettingsOptions.Value
                 .Where(opt => opt.Country == SelectedCountry)
                 .Select(opt => opt.City)
                 .OrderBy(c => c)
                 .ToList()
-                .ForEach(_cities.Add);
+                .ForEach(Cities.Add);
 			
             /*
 			if(_globalDataContainer.YrLocationData.Countries.ContainsKey(SelectedCountry.CountryCode))

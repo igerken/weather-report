@@ -1,16 +1,43 @@
 using System.IO;
 using System.IO.IsolatedStorage;
 using System.Text.Json;
+using Caliburn.Micro;
 using WeatherReport.WinApp.Interfaces;
 
 namespace WeatherReport.Data;
 
-public class UserSettings : IUserSettings
+public class UserSettings : PropertyChangedBase, IUserSettings
 {
     private const string SettingsFileName = "WeatherReportSettings.json";
+        
+    private string? _selectedCountry;
+    private string? _selectedCity;
 
-    public string? SelectedCountry { get; set; }
-    public string? SelectedCity { get; set; }
+    public string? SelectedCountry
+    {
+        get { return _selectedCountry; }
+        set
+        {
+            if (_selectedCountry != value)
+            {
+                _selectedCountry = value;
+                NotifyOfPropertyChange(() => SelectedCountry);
+            }
+        }
+    }
+
+    public string? SelectedCity
+    {
+        get { return _selectedCity; }
+        set
+        {
+            if (_selectedCity != value)
+            {
+                _selectedCity = value;
+                NotifyOfPropertyChange(() => SelectedCity);
+            }
+        }
+    }
 
     public async Task Save()
     {
