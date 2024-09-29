@@ -1,27 +1,20 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.ComponentModel;
+using System.Collections.ObjectModel;
 using System.Windows.Input;
 
 using Caliburn.Micro;
-using Microsoft.Extensions.Logging;
-using WeatherReport.WinApp.Data;
-using WeatherReport.WinApp.Events;
-using WeatherReport.Interfaces;
-using WeatherReport.MVVM;
-using WeatherReport.WinApp.Interfaces;
 using Microsoft.Extensions.Options;
 using WeatherReport.Core.Settings;
-using System.ComponentModel;
+using WeatherReport.MVVM;
+using WeatherReport.WinApp.Events;
+using WeatherReport.WinApp.Interfaces;
 
 namespace WeatherReport.WinApp.ViewModels
 {
     public class UserSettingsViewModel : PropertyChangedBase, IHandle<SettingsRequestedEventData>
 	{
-        private const string DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE = "";
-
 		private readonly IEventAggregator _eventAggregator;
-
         private readonly IOptions<List<LocationSettings>> _locationSettingsOptions;
-		private readonly ILogger<UserSettingsViewModel> _logger;
         private readonly IUserSettings _userSettings;
 
         private List<string> _countries;
@@ -31,7 +24,6 @@ namespace WeatherReport.WinApp.ViewModels
         
         private string? _selectedCountry;
         private string? _selectedCity;
-        private string _cityListRetrievalErrorMessage = DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE;
 
         public ICommand SettingsOkCommand { get; }
 
@@ -72,26 +64,12 @@ namespace WeatherReport.WinApp.ViewModels
             }
         }
 
-        public string CityListRetrievalErrorMessage
-        {
-            get { return _cityListRetrievalErrorMessage; }
-            set
-            {
-                if (_cityListRetrievalErrorMessage != value)
-                {
-                    _cityListRetrievalErrorMessage = value;
-					NotifyOfPropertyChange(() => CityListRetrievalErrorMessage);
-                }
-            }
-        }
-
         public UserSettingsViewModel(IUserSettings userSettings, IEventAggregator eventAggregator, 
-            IOptions<List<LocationSettings>> locationSettingsOptions, ILogger<UserSettingsViewModel> logger)
+            IOptions<List<LocationSettings>> locationSettingsOptions)
         {
             _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 			_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 		    _locationSettingsOptions = locationSettingsOptions ?? throw new ArgumentNullException(nameof(locationSettingsOptions));
-			_logger = logger;
 
             SettingsOkCommand = new RelayCommand(SettingsOkButton_Clicked, 
                 () => !string.IsNullOrEmpty(SelectedCity));
@@ -152,54 +130,23 @@ namespace WeatherReport.WinApp.ViewModels
                 .Select(opt => opt.City)
                 .OrderBy(c => c)
                 .ToList()
-                .ForEach(Cities.Add);
-			
-            /*
-			if(_globalDataContainer.YrLocationData.Countries.ContainsKey(SelectedCountry.CountryCode))
-			{
-				YrCountryData country = _globalDataContainer.YrLocationData.Countries[SelectedCountry.CountryCode];
-				IEnumerable<string> cities = country.Cities.Select(aCity => aCity.Name);
-				string oldSelectedCity = SelectedCity;
-				lock (_cityListLock)
-				{
-					_cities.Clear();
-					foreach (string city in cities.OrderBy(c => c))
-						_cities.Add(city);
-				}
-				if (resetSelectedCity)
-					SelectedCity = null;
-				else
-				{
-					if (_cities.Contains(oldSelectedCity))
-						SelectedCity = oldSelectedCity;
-				}
-				IsCityListAvailable = true;
-				CityListRetrievalErrorMessage = DEFAULT_CITY_LIST_RETRIEVAL_ERROR_MESSAGE;
-			}	*/		
+                .ForEach(Cities.Add);	
         }
 
         public Task HandleAsync(SettingsRequestedEventData message, CancellationToken cancellationToken)
-		{/*
-			_countries = _globalDataContainer.YrLocationData.Countries.Values.ToList();
-			NotifyOfPropertyChange(() => Countries);
-
-			if (!String.IsNullOrEmpty(_settings.SelectedCountry))
+		{
+			if (!string.IsNullOrEmpty(_userSettings.SelectedCountry))
 			{
-				YrCountryData selected = _countries.FirstOrDefault(c => c.CountryCode.Equals(
-					_settings.SelectedCountry, StringComparison.InvariantCultureIgnoreCase));
-				if (selected != null)
-				{
-					_initialCountry = selected;
-					SelectedCountry = selected;
-					UpdateCityList(false);
-				}
+                _initialCountry = _userSettings.SelectedCountry;
+                SelectedCountry = _userSettings.SelectedCountry;
+                UpdateCityList();
 			}
 
-			if (!String.IsNullOrEmpty(_settings.SelectedCity))
+			if (!string.IsNullOrEmpty(_userSettings.SelectedCity))
 			{
-				_initialCity = _settings.SelectedCity;
-				SelectedCity = _settings.SelectedCity;
-			}*/
+				_initialCity = _userSettings.SelectedCity;
+				SelectedCity = _userSettings.SelectedCity;
+			}
             return Task.CompletedTask;
 		}
     }
