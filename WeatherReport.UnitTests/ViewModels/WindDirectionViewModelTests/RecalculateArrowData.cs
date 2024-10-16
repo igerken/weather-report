@@ -1,6 +1,6 @@
 ﻿using System;
 using Xunit;
-/*
+
 using WeatherReport.WinApp.ViewModels;
 
 namespace WeatherReport.UnitTests.ViewModels.WindDirectionViewModelTests
@@ -12,8 +12,6 @@ namespace WeatherReport.UnitTests.ViewModels.WindDirectionViewModelTests
         {
             const double WIND_DIRECTION_SOUTH_WEST = 1.25 * Math.PI;
             const double WIND_SPEED_MODERATE = 5.0;
-
-            //WindDirectionViewModel sut = new WindDirectionViewModel(50.0, 50.0, 40.0);
 
             // --- Act
             sut.RecalculateArrowData(WIND_SPEED_MODERATE, WIND_DIRECTION_SOUTH_WEST);
@@ -28,8 +26,6 @@ namespace WeatherReport.UnitTests.ViewModels.WindDirectionViewModelTests
             const double WIND_DIRECTION_NORTH_EAST = 0.25 * Math.PI;
             const double WIND_SPEED_MODERATE = 5.0;
 
-            //WindDirectionViewModel sut = new WindDirectionViewModel(50.0, 50.0, 40.0);
-
             // --- Act
             sut.RecalculateArrowData(WIND_SPEED_MODERATE, WIND_DIRECTION_NORTH_EAST);
 
@@ -37,4 +33,4 @@ namespace WeatherReport.UnitTests.ViewModels.WindDirectionViewModelTests
                 "Expected the right wing to be brighter than the left wing");
         }
     }
-}*/
+}
