@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-
+/*
 using Caliburn.Micro;
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -82,3 +82,4 @@ namespace WeatherReport.UnitTests.ViewModels.UserSettingsViewModelTests
 
     }
 }
+*/

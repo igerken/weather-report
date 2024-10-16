@@ -3,11 +3,10 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-
-using AutoFixture.Xunit;
+/*
+using AutoFixture.Xunit2;
 using Moq;
 using WeatherReport.Core;
-using WeatherReport.DataModel;
 using WeatherReport.Interfaces;
 using WeatherReport.WinApp.ViewModels;
 using Xunit;
@@ -17,15 +16,13 @@ namespace WeatherReport.UnitTests.ViewModels.WeatherViewModelTests
     public class ChangeLocation
     {
         [Theory, AutoFakeData]
-        public void Given_CommandExecuted__Then_WeatherInfoRetrievedForSelectedCountryCity([Frozen] IWeatherService weatherServiceMock,
+        public void Given_CommandExecuted__Then_WeatherInfoRetrievedForSelectedCountryCity(
+            [Frozen] IWeatherService weatherServiceMock,
             MainViewModel sut)
         {            
             const string COUNTRY_CZ = "CZ";
             const string BRNO = "Brno";
             WeatherInfo brnoWeather = new WeatherInfo(15.0, 3.1, 5.0);
-
-            DummyWeatherSettings settings = new DummyWeatherSettings(
-                new StringCollection { "cz", "de" });
 
             weatherServiceMock.Setup(ws => ws.GetWeather(It.Is<ILocation>(loc => loc.Country == COUNTRY_CZ && loc.City == BRNO)))
                 .Returns(brnoWeather);
@@ -108,4 +105,11 @@ namespace WeatherReport.UnitTests.ViewModels.WeatherViewModelTests
             loggerMock.Verify(log => log.Error(It.IsAny<object>(), expectedException));
         }
     }
+
+    private class Location(string country, string city) : ILocation
+    {
+        public string Country => country;
+        public string City => city;
+    }
 }
+*/

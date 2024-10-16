@@ -5,8 +5,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AutoFixture" Version="4.18.1" />
-    <PackageVersion Include="AutoFixture.AutoFakeItEasy" Version="4.18.1" />
-    <PackageVersion Include="AutoFixture.Xunit" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.AutoMoq" Version="4.18.1" />
+    <PackageVersion Include="AutoFixture.Xunit2" Version="4.18.1" />
     <PackageVersion Include="Caliburn.Micro" Version="4.0.212" />
     <PackageVersion Include="coverlet.collector" Version="6.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

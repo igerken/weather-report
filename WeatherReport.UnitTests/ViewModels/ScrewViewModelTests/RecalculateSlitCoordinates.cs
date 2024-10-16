@@ -22,7 +22,6 @@ public class RecalculateSlitCoordinates
 
         //--- Assert
         double halfSize = SIZE / 2.0;
-        double cathetus = halfSize / Math.Sqrt(2.0);
         Assert.Equal(halfSize, sut.SlitX1, PRECISION);
         Assert.Equal(0.0, sut.SlitY1, PRECISION);
         Assert.Equal(halfSize, sut.SlitX2, PRECISION);

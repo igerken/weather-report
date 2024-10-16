@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections.Specialized;/*
 using WeatherReport.Interfaces;
 
 namespace WeatherReport.UnitTests
@@ -41,3 +41,4 @@ namespace WeatherReport.UnitTests
         }
     }
 }
+*/

@@ -1,6 +1,6 @@
 using AutoFixture;
-using AutoFixture.AutoFakeItEasy;
-using AutoFixture.Xunit;
+using AutoFixture.AutoMoq;
+using AutoFixture.Xunit2;
 
 namespace WeatherReport.UnitTests;
 
@@ -10,7 +10,7 @@ public class AutoFakeData : AutoDataAttribute
         : base(() =>
         {
             var fixture = new Fixture();
-            fixture.Customize(new AutoFakeItEasyCustomization
+            fixture.Customize(new AutoMoqCustomization
             {
                 ConfigureMembers = true,
                 GenerateDelegates = true

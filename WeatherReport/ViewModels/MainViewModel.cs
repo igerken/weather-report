@@ -10,7 +10,6 @@ using WeatherReport.Core;
 using WeatherReport.MVVM;
 using WeatherReport.Core.Events;
 using Dapplo.Microsoft.Extensions.Hosting.Wpf;
-using WeatherReport.Data;
 
 namespace WeatherReport.WinApp.ViewModels;
 

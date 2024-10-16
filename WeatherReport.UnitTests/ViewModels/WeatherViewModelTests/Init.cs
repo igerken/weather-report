@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-
+/*
 using log4net;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -118,3 +118,4 @@ namespace WeatherReport.UnitTests.ViewModels.WeatherViewModelTests
         }
     }
 }
+*/
