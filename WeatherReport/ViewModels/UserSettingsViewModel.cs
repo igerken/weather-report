@@ -17,7 +17,7 @@ namespace WeatherReport.WinApp.ViewModels
         private readonly IOptions<List<LocationSettings>> _locationSettingsOptions;
         private readonly IUserSettings _userSettings;
 
-        private List<string> _countries;
+        private Lazy<string[]> _countriesLazy;
 
         private string? _initialCountry;
         private string? _initialCity;
@@ -29,10 +29,12 @@ namespace WeatherReport.WinApp.ViewModels
 
         public ICommand SettingsCancelCommand { get; }
 
-        public List<string> Countries
+        public string[] Countries
 		{
-            get { return _countries; }
+            get { return _countriesLazy.Value; }
         }
+
+        public ObservableCollection<string> Cities { get; }
 
         public string? SelectedCountry
         {
@@ -47,8 +49,6 @@ namespace WeatherReport.WinApp.ViewModels
                 }
             }
         }
-
-        public ObservableCollection<string> Cities { get; }
 
         public string? SelectedCity
         {
@@ -75,18 +75,30 @@ namespace WeatherReport.WinApp.ViewModels
                 () => !string.IsNullOrEmpty(SelectedCity));
             SettingsCancelCommand = new RelayCommand(SettingsCancelButton_Clicked);
 
-			_countries = _locationSettingsOptions.Value.Select(s => s.Country).Distinct().OrderBy(c => c).ToList();
+            _countriesLazy = new Lazy<string[]>(() => 
+                _locationSettingsOptions.Value.Select(s => s.Country).Distinct().OrderBy(c => c).ToArray());
             Cities = new ObservableCollection<string>();
-
-            _initialCountry = userSettings.SelectedCountry;
-            SelectedCountry = userSettings.SelectedCountry;
-
-            _initialCity = userSettings.SelectedCity;
-            SelectedCity = userSettings.SelectedCity;
 
             _userSettings.PropertyChanged += HandleUserSettingsChanged;
 
 			_eventAggregator.SubscribeOnPublishedThread(this);
+		}
+
+        public Task HandleAsync(SettingsRequestedEventData message, CancellationToken cancellationToken)
+		{
+			if (!string.IsNullOrEmpty(_userSettings.SelectedCountry))
+			{
+                _initialCountry = _userSettings.SelectedCountry;
+                SelectedCountry = _userSettings.SelectedCountry;
+			}
+
+			if (!string.IsNullOrEmpty(_userSettings.SelectedCity))
+			{
+				_initialCity = _userSettings.SelectedCity;
+				SelectedCity = _userSettings.SelectedCity;
+			}
+            
+            return Task.CompletedTask;
 		}
 
         private void HandleUserSettingsChanged(object? sender, PropertyChangedEventArgs e)
@@ -132,22 +144,5 @@ namespace WeatherReport.WinApp.ViewModels
                 .ToList()
                 .ForEach(Cities.Add);	
         }
-
-        public Task HandleAsync(SettingsRequestedEventData message, CancellationToken cancellationToken)
-		{
-			if (!string.IsNullOrEmpty(_userSettings.SelectedCountry))
-			{
-                _initialCountry = _userSettings.SelectedCountry;
-                SelectedCountry = _userSettings.SelectedCountry;
-                UpdateCityList();
-			}
-
-			if (!string.IsNullOrEmpty(_userSettings.SelectedCity))
-			{
-				_initialCity = _userSettings.SelectedCity;
-				SelectedCity = _userSettings.SelectedCity;
-			}
-            return Task.CompletedTask;
-		}
     }
 }
