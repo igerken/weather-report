@@ -13,8 +13,9 @@ public class AutoFakeData : AutoDataAttribute
             fixture.Customize(new AutoMoqCustomization
             {
                 ConfigureMembers = true,
-                GenerateDelegates = true
+                GenerateDelegates = true, 
             });
+            fixture.OmitAutoProperties = true;
             return fixture;
         })
     {
