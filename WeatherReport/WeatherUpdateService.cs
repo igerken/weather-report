@@ -49,14 +49,25 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
             var winfo = await _weatherService.GetWeather(_location);
             await _eventAggregator.PublishOnUIThreadAsync(new WeatherUpdated(winfo));
         }
+        catch (WeatherServiceException wsex)
+        {
+            _logger?.LogError(wsex, "Failed to retrieve weather");
+            await _eventAggregator.PublishOnUIThreadAsync(new WeatherUpdateFailed(wsex.Reason));
+        }
         catch (Exception ex)
         {
             _logger?.LogError(ex, "Failed to retrieve weather");
+            await _eventAggregator.PublishOnUIThreadAsync(new WeatherUpdateFailed(WeatherServiceFailureReason.WeatherInfoUnavailable));
         }
     }
 
     private class WeatherUpdated(IWeatherInfo weather) : IWeatherUpdated
     {
         public IWeatherInfo Weather => weather;
+    }
+
+    private class WeatherUpdateFailed(WeatherServiceFailureReason reason) : IWeatherUpdateFailed
+    {
+        public WeatherServiceFailureReason Reason => reason;
     }
 }

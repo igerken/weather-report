@@ -14,7 +14,8 @@ using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 namespace WeatherReport.WinApp.ViewModels;
 
 public class MainViewModel : Screen, ICaliburnMicroShell,
-	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>, IHandle<IWeatherUpdated>, IHandle<ILocationChanged>
+	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>, 
+	IHandle<IWeatherUpdated>, IHandle<IWeatherUpdateFailed>, IHandle<ILocationChanged>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
 
@@ -204,62 +205,23 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 			_eventAggregator.PublishOnCurrentThreadAsync(
 				new LocationChanged(new Location { Country = _userSettings.SelectedCountry, City = _userSettings.SelectedCity}));
 	}
-/*
-	public void Init()
-	{
-		if (!String.IsNullOrEmpty(_settings.SelectedCity))
-			_displayedCity = _settings.SelectedCity;
 
-		bool isLocationDataAvailable = _yrWeatherDataStorage.IsLocationDataAvailable();
-		IsDownloadProgressLayerVisible = !isLocationDataAvailable;
-		if(!isLocationDataAvailable)
-		{
-			DownloadLocationData();
-		}
-		else
-		{
-			_globalDataContainer.YrLocationData = _yrWeatherDataStorage.GetLocationData();
-		}
-
-		if (!String.IsNullOrEmpty(_settings.SelectedCountry) && _globalDataContainer.YrLocationData.Countries.ContainsKey(_settings.SelectedCountry))
-		{
-			DisplayedCountry = _globalDataContainer.YrLocationData.Countries[_settings.SelectedCountry];
-			if (!String.IsNullOrEmpty(_settings.SelectedCity))
-				_displayedCity = _settings.SelectedCity;
-			GetWeather(true);
-			ResetInfoDisplay();
-		}
-		else
-		{
-			IsSettingsLayerVisible = true;
-			_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
-		}
-
-		_weatherInfoUpdateTimer.Start();
-	}
-*/
 	private void SettingsButton_Clicked()
 	{
 		IsSettingsLayerVisible = true;
-		//_windowManager.ShowWindowAsync((UserSettingsViewModel)_serviceProvider.GetService(typeof(UserSettingsViewModel))!);
 		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
 	}
 
 	private void SetInfoDisplayError(string message)
 	{
-		InfoDisplayStatus = ViewModels.InfoDisplayStatus.Error;
+		InfoDisplayStatus = InfoDisplayStatus.Error;
 		InfoDisplayString = message;
 	}
 
 	private void ResetInfoDisplay()
 	{
-		InfoDisplayStatus = ViewModels.InfoDisplayStatus.Normal;
+		InfoDisplayStatus = InfoDisplayStatus.Normal;
 		InfoDisplayString = DisplayedCity ?? DEFAULT_DISPLAYED_CITY;
-	}
-
-	private string? GetWeatherServiceExceptionDisplayedMessage(WeatherServiceException wex)
-	{
-		return DisplayedErrors.ResourceManager.GetString(wex.Reason.ToString());
 	}
 
 	public async Task HandleAsync(SettingsOkayedEventData message, CancellationToken cancellationToken)
@@ -289,6 +251,14 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
     public Task HandleAsync(IWeatherUpdated message, CancellationToken cancellationToken)
     {
         WeatherInfo = message.Weather;
+		return Task.CompletedTask;
+    }
+
+    public Task HandleAsync(IWeatherUpdateFailed message, CancellationToken cancellationToken)
+    {		
+		string? msg = DisplayedErrors.ResourceManager.GetString(message.Reason.ToString());
+        if(!string.IsNullOrEmpty(msg))
+			SetInfoDisplayError(msg);
 		return Task.CompletedTask;
     }
 

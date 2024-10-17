@@ -2,22 +2,22 @@
 
 public class WeatherServiceException : Exception
 {
-    private WeatherServiceExceptionReason _reason;
+    private WeatherServiceFailureReason _reason;
 
-    public WeatherServiceExceptionReason Reason { get { return _reason; } }
+    public WeatherServiceFailureReason Reason { get { return _reason; } }
 
     public WeatherServiceException()
     {
-        _reason = WeatherServiceExceptionReason.Unknown;
+        _reason = WeatherServiceFailureReason.Unknown;
     }
 
-    public WeatherServiceException(WeatherServiceExceptionReason reason, string message)
+    public WeatherServiceException(WeatherServiceFailureReason reason, string message)
         : base(message)
     {
         _reason = reason;
     }
 
-    public WeatherServiceException(WeatherServiceExceptionReason reason, string message, Exception innerException)
+    public WeatherServiceException(WeatherServiceFailureReason reason, string message, Exception innerException)
         : base(message, innerException)
     {
         _reason = reason;

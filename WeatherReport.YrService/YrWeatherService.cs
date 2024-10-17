@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -6,6 +7,7 @@ using WeatherReport.Core;
 using WeatherReport.Core.Settings;
 using Microsoft.Extensions.Options;
 using WeatherReport.YrService.Contract;
+using System.Diagnostics;
 
 namespace WeatherReport.YrService;
 
@@ -32,8 +34,7 @@ public class YrWeatherService : IWeatherService
         if(locationSettings != null)
         {
             string url = $"https://api.met.no/weatherapi/locationforecast/2.0/compact?lat={locationSettings.Lat}&lon={locationSettings.Long}";
-            CompactResponse? response = 
-                await _httpClient.GetFromJsonAsync<CompactResponse>(url, _jsonSerializerOptions);
+            CompactResponse? response = await Get<CompactResponse>(url);
             Details? details = response?.Properties?.Timeseries?.FirstOrDefault()?.Data?.Instant?.Details;
             if(details != null)
             {
@@ -43,5 +44,24 @@ public class YrWeatherService : IWeatherService
         }
 
         return YrWeatherInfo.Empty;
+    }
+
+    private async Task<T?> Get<T>(string url)
+    {
+        try
+        {
+            return await _httpClient.GetFromJsonAsync<T>(url, _jsonSerializerOptions);
+        }
+        catch (HttpRequestException hrex)
+        {
+            WeatherServiceFailureReason reason = hrex.StatusCode switch
+            {
+                HttpStatusCode.Forbidden => WeatherServiceFailureReason.AccessDenied,
+                HttpStatusCode.Unauthorized => WeatherServiceFailureReason.AccessDenied,
+                HttpStatusCode.InternalServerError => WeatherServiceFailureReason.WeatherInfoUnavailable,
+                _ => WeatherServiceFailureReason.Unknown
+            };
+            throw new WeatherServiceException(reason, "Failed calling the YR API", hrex);
+        }
     }
 }
