@@ -3,17 +3,17 @@ using System.IO;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 using Caliburn.Micro;
-using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 using Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro;
-using WeatherReport.WinApp.ViewModels;
-using WeatherReport.Core;
+using Dapplo.Microsoft.Extensions.Hosting.Wpf;
+using Serilog;
+
 using WeatherReport.Core.Settings;
-using WeatherReport.YrService;
 using WeatherReport.Data;
 using WeatherReport.WinApp.Interfaces;
+using WeatherReport.WinApp.ViewModels;
+using WeatherReport.YrService;
 
 namespace WeatherReport.WinApp;
 
@@ -60,13 +60,12 @@ public static class Program
     /// <returns>IHostBuilder</returns>
     private static IHostBuilder ConfigureLogging(this IHostBuilder hostBuilder)
     {
-        return hostBuilder.ConfigureLogging((hostContext, configLogging) =>
-        {
-            configLogging
-                .AddConfiguration(hostContext.Configuration.GetSection("Logging"))
-                .AddConsole()
-                .AddDebug();
-        });
+        return hostBuilder.UseSerilog((context, loggerConfiguration) =>
+            {
+                loggerConfiguration.WriteTo.Console();
+                loggerConfiguration.WriteTo.File("log\\log-.txt", rollingInterval: RollingInterval.Day);
+                loggerConfiguration.ReadFrom.Configuration(context.Configuration);
+            });
     }
 
     /// <summary>
