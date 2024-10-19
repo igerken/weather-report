@@ -14,6 +14,7 @@ using WeatherReport.Data;
 using WeatherReport.WinApp.Interfaces;
 using WeatherReport.WinApp.ViewModels;
 using WeatherReport.YrService;
+using WeatherReport.WinApp.Data;
 
 namespace WeatherReport.WinApp;
 
@@ -41,6 +42,7 @@ public static class Program
                 serviceCollection.AddSingleton<IWindowManager, WindowManager>();
                 serviceCollection.AddSingleton<IEventAggregator, EventAggregator>();
                 serviceCollection.AddSingleton<IUserSettings>(new UserSettings());
+                serviceCollection.AddOptions<AppSettings>().Bind(ctx.Configuration.GetSection(nameof(AppSettings)));
                 serviceCollection.AddOptions<List<LocationSettings>>().Bind(ctx.Configuration.GetSection(nameof(LocationSettings)));
                 serviceCollection.AddYrWeatherService();
             })
