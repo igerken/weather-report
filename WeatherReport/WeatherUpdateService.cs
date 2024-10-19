@@ -1,4 +1,5 @@
 using Caliburn.Micro;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -8,7 +9,7 @@ using WeatherReport.WinApp.Data;
 
 namespace WeatherReport.WinApp;
 
-public class WeatherUpdateService : IHandle<ILocationChanged>
+public class WeatherUpdateService : IHandle<ILocationChanged>, IHostedService, IDisposable
 {
     private readonly IWeatherService _weatherService;
 
@@ -30,12 +31,24 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
         _appSettings = appSettings ?? throw new ArgumentNullException(nameof(appSettings));
         _logger = logger;
 
-        _weatherInfoUpdateTimer = new System.Timers.Timer(_appSettings.Value.RefreshIntervalSeconds*1000.0);
+        _weatherInfoUpdateTimer = new System.Timers.Timer();
         _weatherInfoUpdateTimer.Elapsed += (s, e) => UpdateWeather();
         _weatherInfoUpdateTimer.AutoReset = true;
-        _weatherInfoUpdateTimer.Enabled = true;
         
 		_eventAggregator.SubscribeOnPublishedThread(this);
+    }
+
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        _weatherInfoUpdateTimer.Interval = _appSettings.Value.RefreshIntervalSeconds*1000.0;
+        _weatherInfoUpdateTimer.Enabled = true;
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        _weatherInfoUpdateTimer.Enabled = false;
+        return Task.CompletedTask;
     }
 
     public Task HandleAsync(ILocationChanged message, CancellationToken cancellationToken)
@@ -43,6 +56,11 @@ public class WeatherUpdateService : IHandle<ILocationChanged>
         _location = message.Location;
         UpdateWeather();
         return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        _weatherInfoUpdateTimer?.Dispose();
     }
 
     private async void UpdateWeather()

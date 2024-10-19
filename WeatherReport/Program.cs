@@ -38,20 +38,19 @@ public static class Program
                 serviceCollection.AddTransient<DownloadProgressViewModel>();
                 serviceCollection.AddTransient<UserSettingsViewModel>();
                 serviceCollection.AddSingleton<WindDirectionViewModel>();
-                serviceCollection.AddSingleton<WeatherUpdateService>();
                 serviceCollection.AddSingleton<IWindowManager, WindowManager>();
                 serviceCollection.AddSingleton<IEventAggregator, EventAggregator>();
                 serviceCollection.AddSingleton<IUserSettings>(new UserSettings());
                 serviceCollection.AddOptions<AppSettings>().Bind(ctx.Configuration.GetSection(nameof(AppSettings)));
                 serviceCollection.AddOptions<List<LocationSettings>>().Bind(ctx.Configuration.GetSection(nameof(LocationSettings)));
                 serviceCollection.AddYrWeatherService();
+                serviceCollection.AddHostedService<WeatherUpdateService>();
             })
             .UseConsoleLifetime()
             .UseWpfLifetime()
             .Build();
 
         Console.WriteLine("Run!");
-        host.Services.GetRequiredService<WeatherUpdateService>();
         return host.RunAsync();
     }
 
