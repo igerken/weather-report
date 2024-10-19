@@ -138,7 +138,7 @@
                     <Line X1="14.64" Y1="85.36" X2="85.36" Y2="14.64" Stroke="#303030" StrokeThickness="0.2" />
                     <Line X1="14.64" Y1="14.64" X2="85.36" Y2="85.36" Stroke="#303030" StrokeThickness="0.2" />                   
 
-                    <Button Canvas.Right="4" Canvas.Top="4" ToolTip="Close" Click="Shutdown_Click"
+                    <Button Canvas.Right="4" Canvas.Top="4" ToolTip="Close" Command="{Binding Path=CloseCommand}" 
                             Template="{StaticResource CloseButtonTemplate}" />
 
                     <Button Canvas.Right="4" Canvas.Bottom="4"

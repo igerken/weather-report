@@ -10,11 +10,6 @@ public partial class MainView : Window
         InitializeComponent();
     }
 
-    private void Shutdown_Click(object sender, RoutedEventArgs e)
-    {
-        Application.Current.Shutdown();
-    }
-
     private void Window_MouseDown(object sender, MouseButtonEventArgs e)
     {
         if (e.ChangedButton == MouseButton.Left)
