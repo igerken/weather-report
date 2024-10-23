@@ -11,7 +11,7 @@ using WeatherReport.WinApp.Interfaces;
 
 namespace WeatherReport.WinApp.ViewModels
 {
-    public class UserSettingsViewModel : PropertyChangedBase, IHandle<SettingsRequestedEventData>
+    public class UserSettingsViewModel : PropertyChangedBase, IHandle<SettingsRequested>
 	{
 		private readonly IEventAggregator _eventAggregator;
         private readonly IOptions<List<LocationSettings>> _locationSettingsOptions;
@@ -84,7 +84,7 @@ namespace WeatherReport.WinApp.ViewModels
 			_eventAggregator.SubscribeOnPublishedThread(this);
 		}
 
-        public Task HandleAsync(SettingsRequestedEventData message, CancellationToken cancellationToken)
+        public Task HandleAsync(SettingsRequested message, CancellationToken cancellationToken)
 		{
 			if (!string.IsNullOrEmpty(_userSettings.SelectedCountry))
 			{
@@ -131,7 +131,7 @@ namespace WeatherReport.WinApp.ViewModels
 			NotifyOfPropertyChange(() => SelectedCountry);
 			NotifyOfPropertyChange(() => SelectedCity);
 
-			_eventAggregator.PublishOnUIThreadAsync(new SettingsCancelledEventData());
+			_eventAggregator.PublishOnUIThreadAsync(new SettingsCancelled());
 		}
 
         private void UpdateCityList()

@@ -35,7 +35,6 @@ public static class Program
             .ConfigureCaliburnMicro<MainViewModel>()
             .ConfigureServices((ctx, serviceCollection) =>
             {
-                serviceCollection.AddTransient<DownloadProgressViewModel>();
                 serviceCollection.AddTransient<UserSettingsViewModel>();
                 serviceCollection.AddSingleton<WindDirectionViewModel>();
                 serviceCollection.AddSingleton<IWindowManager, WindowManager>();

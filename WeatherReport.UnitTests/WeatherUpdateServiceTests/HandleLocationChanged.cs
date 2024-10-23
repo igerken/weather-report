@@ -12,6 +12,7 @@ using WeatherReport.Core.Events;
 using WeatherReport.WinApp;
 using WeatherReport.WinApp.Data;
 using System;
+using WeatherReport.WinApp.Events;
 
 namespace WeatherReport.UnitTests.WeatherUpdateServiceTests;
 
@@ -40,11 +41,5 @@ public class HandleLocationChanged
         //--- Assert
         Assert.NotNull(weatherUpdatedInfo);
         Assert.Equal(weatherInfoMock.Object.Temperature.Value, weatherUpdatedInfo.Temperature.Value, PRECISION);
-    }
-    
-
-    private class LocationChanged(ILocation _location) : ILocationChanged
-    {
-        public ILocation Location => _location;
     }
 }

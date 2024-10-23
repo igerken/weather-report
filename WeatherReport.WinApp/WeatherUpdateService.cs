@@ -6,10 +6,11 @@ using Microsoft.Extensions.Options;
 using WeatherReport.Core;
 using WeatherReport.Core.Events;
 using WeatherReport.WinApp.Data;
+using WeatherReport.WinApp.Events;
 
 namespace WeatherReport.WinApp;
 
-public class WeatherUpdateService : IHandle<ILocationChanged>, IHostedService, IDisposable
+public class WeatherUpdateService : IHandle<LocationChanged>, IHostedService, IDisposable
 {
     private readonly IWeatherService _weatherService;
 
@@ -51,7 +52,7 @@ public class WeatherUpdateService : IHandle<ILocationChanged>, IHostedService, I
         return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ILocationChanged message, CancellationToken cancellationToken)
+    public Task HandleAsync(LocationChanged message, CancellationToken cancellationToken)
     {
         _location = message.Location;
         UpdateWeather();

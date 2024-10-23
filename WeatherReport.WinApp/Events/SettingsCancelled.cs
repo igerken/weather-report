@@ -1,5 +1,5 @@
 ﻿namespace WeatherReport.WinApp.Events;
 
-public class SettingsRequestedEventData
+public class SettingsCancelled
 {
 }

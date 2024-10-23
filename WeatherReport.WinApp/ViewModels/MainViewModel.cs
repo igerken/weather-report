@@ -3,9 +3,8 @@
 using Caliburn.Micro;
 using Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro;
 using Microsoft.Extensions.Logging;
-using WeatherReport.WinApp.Interfaces;
-using WeatherReport.WinApp.Data;
 using WeatherReport.WinApp.Events;
+using WeatherReport.WinApp.Interfaces;
 using WeatherReport.Core;
 using WeatherReport.MVVM;
 using WeatherReport.Core.Events;
@@ -14,8 +13,8 @@ using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 namespace WeatherReport.WinApp.ViewModels;
 
 public class MainViewModel : Screen, ICaliburnMicroShell,
-	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelledEventData>, 
-	IHandle<IWeatherUpdated>, IHandle<IWeatherUpdateFailed>, IHandle<ILocationChanged>
+	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelled>, 
+	IHandle<IWeatherUpdated>, IHandle<IWeatherUpdateFailed>, IHandle<LocationChanged>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
 
@@ -174,7 +173,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		RaiseLocationChanged();
 	}
 
-	public Task HandleAsync(SettingsCancelledEventData message, CancellationToken cancellationToken)
+	public Task HandleAsync(SettingsCancelled message, CancellationToken cancellationToken)
 	{
 		IsSettingsLayerVisible = false;
 		return Task.CompletedTask;
@@ -194,7 +193,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		return Task.CompletedTask;
     }
 
-    public Task HandleAsync(ILocationChanged message, CancellationToken cancellationToken)
+    public Task HandleAsync(LocationChanged message, CancellationToken cancellationToken)
     {
         DisplayedCity = message.Location.City;
 		return Task.CompletedTask;
@@ -229,7 +228,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 	private void SettingsButton_Clicked()
 	{
 		IsSettingsLayerVisible = true;
-		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequestedEventData());
+		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequested());
 	}
 
 	private void CloseButton_Clicked() =>_wpfContext.WpfApplication.Shutdown();
@@ -262,10 +261,5 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
         public string Country { get; set; } = string.Empty;
 
         public string City { get; set; } = string.Empty;
-    }
-
-    private class LocationChanged(ILocation _location) : ILocationChanged
-    {
-        public ILocation Location => _location;
     }
 }
