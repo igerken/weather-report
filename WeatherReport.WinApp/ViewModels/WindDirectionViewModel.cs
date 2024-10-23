@@ -1,11 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
 using Caliburn.Micro;
-using WeatherReport.Core.Events;
+
+using WeatherReport.WinApp.Events;
 
 namespace WeatherReport.WinApp.ViewModels;
 
-public class WindDirectionViewModel : PropertyChangedBase, IHandle<IWeatherUpdated>
+public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdated>
 {
     private const double BEAUFORT_HURRICANE = 12.0;
     private const double BEAUFORT_GALE = 8.0;
@@ -145,7 +146,7 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<IWeatherUpdat
         return new HsvColor(NORMAL_HUE, (float)sat, (float)val);
     }
 
-    public Task HandleAsync(IWeatherUpdated message, CancellationToken cancellationToken)
+    public Task HandleAsync(WeatherUpdated message, CancellationToken cancellationToken)
     {
         RecalculateArrowData(message.Weather.WindSpeed, message.Weather.WindDirection);
         return Task.CompletedTask;

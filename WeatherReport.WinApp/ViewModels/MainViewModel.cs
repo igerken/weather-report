@@ -3,18 +3,18 @@
 using Caliburn.Micro;
 using Dapplo.Microsoft.Extensions.Hosting.CaliburnMicro;
 using Microsoft.Extensions.Logging;
+
+using WeatherReport.Core;
 using WeatherReport.WinApp.Events;
 using WeatherReport.WinApp.Interfaces;
-using WeatherReport.Core;
 using WeatherReport.MVVM;
-using WeatherReport.Core.Events;
 using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 
 namespace WeatherReport.WinApp.ViewModels;
 
 public class MainViewModel : Screen, ICaliburnMicroShell,
 	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelled>, 
-	IHandle<IWeatherUpdated>, IHandle<IWeatherUpdateFailed>, IHandle<LocationChanged>
+	IHandle<WeatherUpdated>, IHandle<WeatherUpdateFailed>, IHandle<LocationChanged>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
 
@@ -179,13 +179,13 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		return Task.CompletedTask;
 	}
 
-    public Task HandleAsync(IWeatherUpdated message, CancellationToken cancellationToken)
+    public Task HandleAsync(WeatherUpdated message, CancellationToken cancellationToken)
     {
         WeatherInfo = message.Weather;
 		return Task.CompletedTask;
     }
 
-    public Task HandleAsync(IWeatherUpdateFailed message, CancellationToken cancellationToken)
+    public Task HandleAsync(WeatherUpdateFailed message, CancellationToken cancellationToken)
     {		
 		string? msg = DisplayedErrors.ResourceManager.GetString(message.Reason.ToString());
         if(!string.IsNullOrEmpty(msg))

@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using WeatherReport.Core;
-using WeatherReport.Core.Events;
 using WeatherReport.WinApp.Data;
 using WeatherReport.WinApp.Events;
 
@@ -84,15 +83,5 @@ public class WeatherUpdateService : IHandle<LocationChanged>, IHostedService, ID
             _logger?.LogError(ex, "Failed to retrieve weather");
             await _eventAggregator.PublishOnUIThreadAsync(new WeatherUpdateFailed(WeatherServiceFailureReason.WeatherInfoUnavailable));
         }
-    }
-
-    private class WeatherUpdated(IWeatherInfo weather) : IWeatherUpdated
-    {
-        public IWeatherInfo Weather => weather;
-    }
-
-    private class WeatherUpdateFailed(WeatherServiceFailureReason reason) : IWeatherUpdateFailed
-    {
-        public WeatherServiceFailureReason Reason => reason;
     }
 }
