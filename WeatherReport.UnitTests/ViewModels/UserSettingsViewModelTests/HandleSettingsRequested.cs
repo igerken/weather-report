@@ -33,7 +33,7 @@ namespace WeatherReport.UnitTests.ViewModels.UserSettingsViewModelTests
             locationSettingsOptionsMock.Setup(lso => lso.Value).Returns(GetDefaultLocationSettings());
             
             // --- Act
-            sut.HandleAsync(new SettingsRequestedEventData(), CancellationToken.None);
+            sut.HandleAsync(new SettingsRequested(), CancellationToken.None);
 
             // --- Assert
             Assert.Equal(COUNTRY_CZECHIA, sut.SelectedCountry);
@@ -49,13 +49,13 @@ namespace WeatherReport.UnitTests.ViewModels.UserSettingsViewModelTests
             [Frozen] Mock<IOptions<List<LocationSettings>>> locationSettingsOptionsMock,
             UserSettingsViewModel sut)
         {
-            userSettingsMock.Setup(uset => uset.SelectedCountry).Returns((string)null);
-            userSettingsMock.Setup(uset => uset.SelectedCity).Returns((string)null);
+            userSettingsMock.Setup(uset => uset.SelectedCountry).Returns((string?)null);
+            userSettingsMock.Setup(uset => uset.SelectedCity).Returns((string?)null);
 
             locationSettingsOptionsMock.Setup(lso => lso.Value).Returns(GetDefaultLocationSettings());
             
             // --- Act
-            sut.HandleAsync(new SettingsRequestedEventData(), CancellationToken.None);
+            sut.HandleAsync(new SettingsRequested(), CancellationToken.None);
 
             // --- Assert
             Assert.Null(sut.SelectedCountry);
