@@ -33,12 +33,10 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" HorizontalAlignment="Right"
-                        Command="{Binding SettingsOkCommand}">
+            <Button x:Name="OkSettings" Grid.Column="0" HorizontalAlignment="Right">
                 <Image Source="/WeatherReport.WinApp;component/Resources/Checkmark.png" Width="13" Height="13" />
             </Button>
-            <Button Grid.Column="2" HorizontalAlignment="Left"
-                        Command="{Binding SettingsCancelCommand}">
+            <Button x:Name="CancelSettings" Grid.Column="2" HorizontalAlignment="Left">
                 <Image Source="/WeatherReport.WinApp;component/Resources/X.png" Width="13" Height="13" />
             </Button>
         </Grid>

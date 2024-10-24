@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using WeatherReport.Core;
 using WeatherReport.WinApp.Events;
 using WeatherReport.WinApp.Interfaces;
-using WeatherReport.MVVM;
 using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 
 namespace WeatherReport.WinApp.ViewModels;
@@ -29,10 +28,6 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 	private readonly ILogger<MainViewModel> _logger;
 
 	private readonly IUserSettings _userSettings;
-
-	private readonly RelayCommand _settingsCommand;
-
-	private readonly RelayCommand _closeCommand;
 
 	private bool _isSettingsLayerVisible = false;
 
@@ -133,10 +128,6 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 
 	public double WindDirection => _weatherInfo.WindDirection ?? 0.0;
 
-	public ICommand SettingsCommand => _settingsCommand;
-
-	public ICommand CloseCommand => _closeCommand;
-
 	public MainViewModel(IWpfContext wpfContext,
 		IServiceProvider serviceProvider, IEventAggregator eventAggregator, 
 		IUserSettings userSettings, ILogger<MainViewModel> logger)
@@ -147,13 +138,18 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 		_userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 		_logger = logger;
 
-		_settingsCommand = new RelayCommand(SettingsButton_Clicked);
-		_closeCommand = new RelayCommand(CloseButton_Clicked);
-
 		_weatherInfo = EmptyWeatherInfo.Instance;
 
 		_eventAggregator.SubscribeOnPublishedThread(this);
 	}
+
+	public void ShowSettings()
+	{
+		IsSettingsLayerVisible = true;
+		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequested());
+	}
+
+	public void CloseApplication() =>_wpfContext.WpfApplication.Shutdown();
 
 	public async Task HandleAsync(SettingsOkayedEventData message, CancellationToken cancellationToken)
 	{
@@ -224,14 +220,6 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 			_eventAggregator.PublishOnCurrentThreadAsync(
 				new LocationChanged(new Location { Country = _userSettings.SelectedCountry, City = _userSettings.SelectedCity}));
 	}
-
-	private void SettingsButton_Clicked()
-	{
-		IsSettingsLayerVisible = true;
-		_eventAggregator.PublishOnUIThreadAsync(new SettingsRequested());
-	}
-
-	private void CloseButton_Clicked() =>_wpfContext.WpfApplication.Shutdown();
 
 	private void SetInfoDisplayError(string message)
 	{

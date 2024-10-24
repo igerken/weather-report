@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Caliburn.Micro;
 using Microsoft.Extensions.Options;
 using WeatherReport.Core.Settings;
-using WeatherReport.MVVM;
 using WeatherReport.WinApp.Events;
 using WeatherReport.WinApp.Interfaces;
 
@@ -24,10 +23,6 @@ namespace WeatherReport.WinApp.ViewModels
         
         private string? _selectedCountry;
         private string? _selectedCity;
-
-        public ICommand SettingsOkCommand { get; }
-
-        public ICommand SettingsCancelCommand { get; }
 
         public string[] Countries
 		{
@@ -59,10 +54,13 @@ namespace WeatherReport.WinApp.ViewModels
                 {
                     _selectedCity = value;
 					NotifyOfPropertyChange(() => SelectedCity);
+					NotifyOfPropertyChange(() => CanOkSettings);                    
                     CommandManager.InvalidateRequerySuggested();
                 }
             }
         }
+
+        public bool CanOkSettings => !string.IsNullOrEmpty(SelectedCity);
 
         public UserSettingsViewModel(IUserSettings userSettings, IEventAggregator eventAggregator, 
             IOptions<List<LocationSettings>> locationSettingsOptions)
@@ -70,10 +68,6 @@ namespace WeatherReport.WinApp.ViewModels
             _userSettings = userSettings ?? throw new ArgumentNullException(nameof(userSettings));
 			_eventAggregator = eventAggregator ?? throw new ArgumentNullException(nameof(eventAggregator));
 		    _locationSettingsOptions = locationSettingsOptions ?? throw new ArgumentNullException(nameof(locationSettingsOptions));
-
-            SettingsOkCommand = new RelayCommand(SettingsOkButton_Clicked, 
-                () => !string.IsNullOrEmpty(SelectedCity));
-            SettingsCancelCommand = new RelayCommand(SettingsCancelButton_Clicked);
 
             _countriesLazy = new Lazy<string[]>(() => 
                 _locationSettingsOptions.Value.Select(s => s.Country).Distinct().OrderBy(c => c).ToArray());
@@ -114,7 +108,7 @@ namespace WeatherReport.WinApp.ViewModels
             }
         }
 
-        private void SettingsOkButton_Clicked()
+        public void OkSettings()
         {
             _userSettings.SelectedCountry = SelectedCountry;
             _userSettings.SelectedCity = SelectedCity;
@@ -122,7 +116,7 @@ namespace WeatherReport.WinApp.ViewModels
 			_eventAggregator.PublishOnUIThreadAsync(new SettingsOkayedEventData(SelectedCountry!, SelectedCity!));
         }
 
-        private void SettingsCancelButton_Clicked()
+        public void CancelSettings()
         {
             _selectedCountry = _initialCountry;
             _selectedCity = _initialCity;
