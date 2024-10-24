@@ -1,8 +1,8 @@
-﻿using WeatherReport.MVVM;
+﻿using Caliburn.Micro;
 
 namespace WeatherReport.WinApp.ViewModels;
 
-public class ScrewViewModel : ObservableObject
+public class ScrewViewModel : PropertyChangedBase
 {
     public double _size;
 
@@ -19,7 +19,7 @@ public class ScrewViewModel : ObservableObject
             if (_slitX1 != value)
             {
                 _slitX1 = value;
-                RaisePropertyChanged("SlitX1");
+                NotifyOfPropertyChange(() => SlitX1);
             }
         }
     }
@@ -32,7 +32,7 @@ public class ScrewViewModel : ObservableObject
             if (_slitY1 != value)
             {
                 _slitY1 = value;
-                RaisePropertyChanged("SlitY1");
+                NotifyOfPropertyChange(() => SlitY1);
             }
         }
     }
@@ -45,7 +45,7 @@ public class ScrewViewModel : ObservableObject
             if (_slitX2 != value)
             {
                 _slitX2 = value;
-                RaisePropertyChanged("SlitX2");
+                NotifyOfPropertyChange(() => SlitX2);
             }
         }
     }
@@ -58,7 +58,7 @@ public class ScrewViewModel : ObservableObject
             if (_slitY2 != value)
             {
                 _slitY2 = value;
-                RaisePropertyChanged("SlitY2");
+                NotifyOfPropertyChange(() => SlitY2);
             }
         }
     }
