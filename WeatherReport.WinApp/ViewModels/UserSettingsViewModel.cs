@@ -113,7 +113,7 @@ namespace WeatherReport.WinApp.ViewModels
             _userSettings.SelectedCountry = SelectedCountry;
             _userSettings.SelectedCity = SelectedCity;
 
-			_eventAggregator.PublishOnUIThreadAsync(new SettingsOkayedEventData(SelectedCountry!, SelectedCity!));
+			_eventAggregator.PublishOnUIThreadAsync(new SettingsOkayed(SelectedCountry!, SelectedCity!));
         }
 
         public void CancelSettings()

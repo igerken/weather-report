@@ -12,7 +12,7 @@ using Dapplo.Microsoft.Extensions.Hosting.Wpf;
 namespace WeatherReport.WinApp.ViewModels;
 
 public class MainViewModel : Screen, ICaliburnMicroShell,
-	IHandle<SettingsOkayedEventData>, IHandle<SettingsCancelled>, 
+	IHandle<SettingsOkayed>, IHandle<SettingsCancelled>, 
 	IHandle<WeatherUpdated>, IHandle<WeatherUpdateFailed>, IHandle<LocationChanged>
 {
 	public const string PROP_WEATHER_INFO = "WeatherInfo";
@@ -151,7 +151,7 @@ public class MainViewModel : Screen, ICaliburnMicroShell,
 
 	public void CloseApplication() =>_wpfContext.WpfApplication.Shutdown();
 
-	public async Task HandleAsync(SettingsOkayedEventData message, CancellationToken cancellationToken)
+	public async Task HandleAsync(SettingsOkayed message, CancellationToken cancellationToken)
 	{
 		_displayedCity = message.Location.City;
 		ResetInfoDisplay();
