@@ -5,7 +5,7 @@
             "name": "C#: WeatherReport",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}\\WeatherReport.WinApp\\WeatherReport.WinApp.csproj",
+            "projectPath": "${workspaceFolder}\\src\\WeatherReport.WinApp\\WeatherReport.WinApp.csproj",
             "launchConfigurationId": "TargetFramework=;WeatherReport.WinApp"
         }
     ]
