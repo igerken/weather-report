@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
 
@@ -11,6 +8,8 @@ namespace WeatherReport.WinApp.Converters;
 
 public class HsvColorToColorConverter : IValueConverter
 {
+    private static readonly Color DefaultColor = Color.FromArgb(0, 0, 0, 0);
+
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (targetType != typeof(Color))
@@ -19,7 +18,7 @@ public class HsvColorToColorConverter : IValueConverter
         HsvColor? hsvValue = value as HsvColor;
         if (hsvValue != null)
             return GetColorFromHSV(hsvValue.Hue, hsvValue.Saturation, hsvValue.Value);
-        return null;
+        return DefaultColor;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -80,7 +79,6 @@ public class HsvColorToColorConverter : IValueConverter
                     g = p;
                     b = q;
                     break;
-
             }
         }
 
