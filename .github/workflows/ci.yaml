@@ -38,13 +38,3 @@ jobs:
         with:
           path: coverage/Cobertura.xml
           fail: false
-
-      - name: Add report to PR comment
-        uses: marocchino/sticky-pull-request-comment@v2
-        if: github.event_name == 'pull_request'
-        with:
-          recreate: true
-          path: code-coverage-results.md
-
-      - name: Write a job summary
-        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
