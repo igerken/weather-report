@@ -32,3 +32,10 @@ jobs:
 
       - name: Merge reports
         run: reportgenerator "-reports:coverage/**/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:Cobertura"
+
+      - name: Code coverage report
+        uses: insightsengineering/coverage-action@v2
+        with:
+          path: coverage/Cobertura.xml
+          fail: false
+          diff: false
