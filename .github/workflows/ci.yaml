@@ -38,3 +38,4 @@ jobs:
         with:
           path: coverage/Cobertura.xml
           fail: false
+          diff: false
