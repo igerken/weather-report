@@ -32,3 +32,19 @@ jobs:
 
       - name: Merge reports
         run: reportgenerator "-reports:coverage/**/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:Cobertura"
+
+      - name: Code coverage report
+        uses: insightsengineering/coverage-action@v2
+        with:
+          path: coverage/Cobertura.xml
+          fail: false
+
+      - name: Add report to PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: code-coverage-results.md
+
+      - name: Write a job summary
+        run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
