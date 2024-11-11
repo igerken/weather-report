@@ -51,19 +51,18 @@ public class WeatherUpdateService : IHandle<LocationChanged>, IHostedService, ID
         return Task.CompletedTask;
     }
 
-    public Task HandleAsync(LocationChanged message, CancellationToken cancellationToken)
-    {
-        _location = message.Location;
-        UpdateWeather();
-        return Task.CompletedTask;
-    }
-
     public void Dispose()
     {
         _weatherInfoUpdateTimer?.Dispose();
     }
 
-    private async void UpdateWeather()
+    public async Task HandleAsync(LocationChanged message, CancellationToken cancellationToken)
+    {
+        _location = message.Location;
+        await UpdateWeather().ConfigureAwait(false);
+    }
+
+    private async Task UpdateWeather()
     {
         try
         {

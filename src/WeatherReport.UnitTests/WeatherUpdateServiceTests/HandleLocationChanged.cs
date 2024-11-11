@@ -53,7 +53,7 @@ public class HandleLocationChanged
     }
 
     [Theory, AutoFakeData]
-    public async Task Given_WeatherServiceFails__Then_WeatherUpdateFaileddMessagePublished(
+    public async Task Given_WeatherServiceFails__Then_WeatherUpdateFailedMessagePublished(
         [Frozen] Mock<IWeatherService> weatherServiceMock, 
         [Frozen] Mock<IEventAggregator> eventAggregatorMock,
         Mock<ILocation> locationMock,
@@ -84,6 +84,40 @@ public class HandleLocationChanged
 
         //--- Assert
         Assert.True(publishedFailureReason.HasValue);
-        Assert.Equal(publishedFailureReason.Value, failureReason);
+        Assert.Equal(failureReason, publishedFailureReason.Value);
+    }
+
+    // Unit test for HandleAsync method of WeatherUpdateService class for Exception thrown when calling weather service, inject SUT into the test method using AutoFakeData attribute
+    [Theory, AutoFakeData]
+    public async Task Given_WeatherServiceThrowsException__Then_WeatherUpdateFailedMessagePublishedWithReasonUnknown(
+        [Frozen] Mock<IWeatherService> weatherServiceMock, 
+        [Frozen] Mock<IEventAggregator> eventAggregatorMock,
+        Mock<ILocation> locationMock,
+        WeatherUpdateService sut)
+    {
+        TimeSpan serviceResponseTime = TimeSpan.FromMilliseconds(50);
+        WeatherServiceFailureReason? publishedFailureReason = null;
+
+        // Simulate delayed service response
+        weatherServiceMock
+            .Setup(ws => ws.GetWeather(It.IsAny<ILocation>()))
+            .ThrowsAsync(new Exception(), serviceResponseTime);
+
+        // Setup wait for the call of event aggregator
+        eventAggregatorMock.Setup(ea => ea.PublishAsync(It.IsAny<WeatherUpdateFailed>(), It.IsAny<Func<Func<Task>, Task>>(), It.IsAny<CancellationToken>()))
+            .Callback<object, Func<Func<Task>, Task>, CancellationToken>((wupd, _1, _2) => 
+                {
+                    publishedFailureReason = (wupd as WeatherUpdateFailed)?.Reason;
+                })
+            .Returns(Task.CompletedTask);
+
+        //--- Act
+        await sut.HandleAsync(new LocationChanged(locationMock.Object), CancellationToken.None);
+
+        //--- Assert
+        Assert.True(publishedFailureReason.HasValue);
+        eventAggregatorMock.Verify(ea => ea.PublishAsync(
+            It.Is<WeatherUpdateFailed>(waf => waf.Reason == WeatherServiceFailureReason.Unknown), 
+            It.IsAny<Func<Func<Task>, Task>>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
