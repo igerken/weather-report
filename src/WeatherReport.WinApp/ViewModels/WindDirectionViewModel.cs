@@ -66,7 +66,13 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdate
         _arrowRightWingPoints = new ObservableCollection<Point>{ new Point(_centerX, _centerY) };
     }
 
-    public void RecalculateArrowData(double? windSpeed, double? windDirection)
+    public Task HandleAsync(WeatherUpdated message, CancellationToken cancellationToken)
+    {
+        RecalculateArrowData(message.Weather.WindSpeed, message.Weather.WindDirection);
+        return Task.CompletedTask;
+    }
+
+    private void RecalculateArrowData(double? windSpeed, double? windDirection)
     {
         if (windSpeed.HasValue && windDirection.HasValue)
         {
@@ -144,11 +150,5 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdate
         double val = NORMAL_VAL + NORMAL_VAL_DIFF * Math.Cos(normalDirection + 0.25 * Math.PI);
 
         return new HsvColor(NORMAL_HUE, (float)sat, (float)val);
-    }
-
-    public Task HandleAsync(WeatherUpdated message, CancellationToken cancellationToken)
-    {
-        RecalculateArrowData(message.Weather.WindSpeed, message.Weather.WindDirection);
-        return Task.CompletedTask;
     }
 }
