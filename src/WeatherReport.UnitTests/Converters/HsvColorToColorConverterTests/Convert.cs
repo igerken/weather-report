@@ -8,7 +8,7 @@ namespace WeatherReport.UnitTests.Converters.HsvColorToColorConverterTests;
 public class Convert
 {
     [Fact]
-    public void Convert_WhenCalledWithHsvColorRed_ReturnsColorRed()
+    public void WhenCalledWithHsvColorRed_ReturnsColorRed()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
@@ -24,7 +24,7 @@ public class Convert
 
     // Unit test for Convert method of HsvColorToColorConverter class for  HsvColor which represents the blue color
     [Fact]
-    public void Convert_WhenCalledWithHsvColorBlue_ReturnsColorBlue()
+    public void WhenCalledWithHsvColorBlue_ReturnsColorBlue()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
@@ -40,7 +40,7 @@ public class Convert
 
     // Unit test for Convert method of HsvColorToColorConverter class for HsvColor which represents the black color (no saturation)
     [Fact]
-    public void Convert_WhenCalledWithHsvColorBlack_ReturnsColorBlack()
+    public void WhenCalledWithHsvColorBlack_ReturnsColorBlack()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
@@ -57,7 +57,7 @@ public class Convert
 
     // Unit test for Convert method of HsvColorToColorConverter class for  HsvColor which represents the white color (full saturation and brightness)
     [Fact]
-    public void Convert_WhenCalledWithHsvColorWhite_ReturnsColorWhite()
+    public void WhenCalledWithHsvColorWhite_ReturnsColorWhite()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
@@ -74,7 +74,7 @@ public class Convert
 
     // Unit test for Convert method of HsvColorToColorConverter class for  HsvColor which represents the half saturated red color
     [Fact]
-    public void Convert_WhenCalledWithHsvColorRedHalfSaturatedFullBright_ReturnsColorRed()
+    public void WhenCalledWithHsvColorRedHalfSaturatedFullBright_ReturnsColorRed()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
@@ -90,7 +90,7 @@ public class Convert
     
     // Unit test for Convert method of HsvColorToColorConverter class for HsvColor which represents the half saturated green color, half bright
     [Fact]
-    public void Convert_WhenCalledWithHsvColorGreenHalfSaturatedHalfBright_ReturnsColorGreen()
+    public void WhenCalledWithHsvColorGreenHalfSaturatedHalfBright_ReturnsColorGreen()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
@@ -106,7 +106,7 @@ public class Convert
 
     // Unit test for Convert method of HsvColorToColorConverter class for HsvColor which represents neutral grey color, half bright
     [Fact]
-    public void Convert_WhenCalledWithHsvColorGreyHalfBright_ReturnsColorGrey()
+    public void WhenCalledWithHsvColorGreyHalfBright_ReturnsColorGrey()
     {
         // Arrange
         var converter = new HsvColorToColorConverter();
