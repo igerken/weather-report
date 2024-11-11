@@ -36,14 +36,15 @@ public class HandleWeatherUpdated
             "Expected the right wing to be brighter than the left wing");
     }
 
-    // Unit test for HandleAsync method of WindDirectionViewModel class for wind speed below gale force, inject SUT into the test method using AutoFakeData attribute
+    // Unit test for HandleAsync method of WindDirectionViewModel class for either wind speed or wind direction is null, inject SUT into the test method using AutoFakeData attribute
     [Theory, AutoFakeData]
-    public void Given_WindSpeedBelowGaleForce__Then_ArrowColorsAreNormal(WindDirectionViewModel sut)
+    public void Given_WindSpeedOrDirectionIsNull__Then_ArrowWingsHaveSinglePoint(WindDirectionViewModel sut)
     {
         // --- Act
-        sut.HandleAsync(new WeatherUpdated(DummyTemperature, 5.0, 0.0), CancellationToken.None);
+        sut.HandleAsync(new WeatherUpdated(DummyTemperature, null, null), CancellationToken.None);
 
         // --- Assert
-        Assert.Equal(sut.ArrowLeftWingColor, sut.ArrowRightWingColor);
+        Assert.Single(sut.ArrowLeftWingPoints);
+        Assert.Single(sut.ArrowRightWingPoints);
     }
 }
