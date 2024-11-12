@@ -17,7 +17,7 @@ public class HsvColorToColorConverter : IValueConverter
 
         HsvColor? hsvValue = value as HsvColor;
         if (hsvValue != null)
-            return GetColorFromHSV(hsvValue.Hue, hsvValue.Saturation, hsvValue.Value);
+            return GetColorFromHsv(hsvValue.Hue, hsvValue.Saturation, hsvValue.Value);
         return DefaultColor;
     }
 
@@ -26,62 +26,56 @@ public class HsvColorToColorConverter : IValueConverter
         throw new NotSupportedException("ConvertBack should never be called");
     }
 
-    private static Color GetColorFromHSV(float h, float s, float v)
+    private static Color GetColorFromHsv(float hue, float sat, float val)
     {
-        double r = 0.0, g = 0.0, b = 0.0;
-        double p, q, f, t;
-        int i;
-
-        if (s == 0.0F)
+        if (sat == 0)
         {
-            r = v;
-            g = r;
-            b = r;
+            byte shade = (byte)(val * 255);
+            return Color.FromRgb(shade, shade, shade);
+        }
+
+        float chroma = val * sat;
+        float x = chroma * (1 - Math.Abs(hue / 60 % 2 - 1));
+        float m = val - chroma;
+
+        float r, g, b;
+        if (hue < 60)
+        {
+            r = chroma;
+            g = x;
+            b = 0;
+        }
+        else if (hue < 120)
+        {
+            r = x;
+            g = chroma;
+            b = 0;
+        }
+        else if (hue < 180)
+        {
+            r = 0;
+            g = chroma;
+            b = x;
+        }
+        else if (hue < 240)
+        {
+            r = 0;
+            g = x;
+            b = chroma;
+        }
+        else if (hue < 300)
+        {
+            r = x;
+            g = 0;
+            b = chroma;
         }
         else
         {
-            h = h / 60;
-            i = (int)h;
-            f = h - i;
-            p = v * (1 - s);
-            q = v * (1 - (s * f));
-            t = v * (1 - (s * (1 - f)));
-
-            switch (i)
-            {
-                case 0:
-                    r = v;
-                    g = t;
-                    b = p;
-                    break;
-                case 1:
-                    r = q;
-                    g = v;
-                    b = p;
-                    break;
-                case 2:
-                    r = p;
-                    g = v;
-                    b = t;
-                    break;
-                case 3:
-                    r = p;
-                    g = q;
-                    b = v;
-                    break;
-                case 4:
-                    r = t;
-                    g = p;
-                    b = v;
-                    break;
-                default:		// case 5:
-                    r = v;
-                    g = p;
-                    b = q;
-                    break;
-            }
+            r = chroma;
+            g = 0;
+            b = x;
         }
 
-        return Color.FromScRgb(1, (float)r, (float)g, (float)b);
+        return Color.FromRgb((byte)((r + m) * 255), (byte)((g + m) * 255), (byte)((b + m) * 255));
     }
 }
