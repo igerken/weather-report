@@ -12,11 +12,11 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdate
     private const double BEAUFORT_GALE = 8.0;
     private const double BEAUFORT_DISPLAY_LIMIT = BEAUFORT_GALE;
 
-    private const float NORMAL_HUE = 221.0F;
-    private const float NORMAL_SAT = 0.74F;
-    private const float NORMAL_VAL = 0.6F;
-    private const float NORMAL_SAT_DIFF = 0.2F;
-    private const float NORMAL_VAL_DIFF = 0.35F;
+    private const float NORMAL_HUE = 211.0F;
+    private const float NORMAL_SAT = 0.4F;
+    private const float NORMAL_VAL = 0.65F;
+    private const float NORMAL_SAT_DIFF = 0.1F;
+    private const float NORMAL_VAL_DIFF = 0.22F;
 
 	private readonly IEventAggregator _eventAggregator;
 
@@ -66,7 +66,13 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdate
         _arrowRightWingPoints = new ObservableCollection<Point>{ new Point(_centerX, _centerY) };
     }
 
-    public void RecalculateArrowData(double? windSpeed, double? windDirection)
+    public Task HandleAsync(WeatherUpdated message, CancellationToken cancellationToken)
+    {
+        RecalculateArrowData(message.Weather.WindSpeed, message.Weather.WindDirection);
+        return Task.CompletedTask;
+    }
+
+    private void RecalculateArrowData(double? windSpeed, double? windDirection)
     {
         if (windSpeed.HasValue && windDirection.HasValue)
         {
@@ -144,11 +150,5 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdate
         double val = NORMAL_VAL + NORMAL_VAL_DIFF * Math.Cos(normalDirection + 0.25 * Math.PI);
 
         return new HsvColor(NORMAL_HUE, (float)sat, (float)val);
-    }
-
-    public Task HandleAsync(WeatherUpdated message, CancellationToken cancellationToken)
-    {
-        RecalculateArrowData(message.Weather.WindSpeed, message.Weather.WindDirection);
-        return Task.CompletedTask;
     }
 }
