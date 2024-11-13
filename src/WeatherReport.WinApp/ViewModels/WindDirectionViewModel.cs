@@ -12,11 +12,11 @@ public class WindDirectionViewModel : PropertyChangedBase, IHandle<WeatherUpdate
     private const double BEAUFORT_GALE = 8.0;
     private const double BEAUFORT_DISPLAY_LIMIT = BEAUFORT_GALE;
 
-    private const float NORMAL_HUE = 221.0F;
-    private const float NORMAL_SAT = 0.74F;
-    private const float NORMAL_VAL = 0.6F;
-    private const float NORMAL_SAT_DIFF = 0.2F;
-    private const float NORMAL_VAL_DIFF = 0.35F;
+    private const float NORMAL_HUE = 211.0F;
+    private const float NORMAL_SAT = 0.4F;
+    private const float NORMAL_VAL = 0.65F;
+    private const float NORMAL_SAT_DIFF = 0.1F;
+    private const float NORMAL_VAL_DIFF = 0.22F;
 
 	private readonly IEventAggregator _eventAggregator;
 
